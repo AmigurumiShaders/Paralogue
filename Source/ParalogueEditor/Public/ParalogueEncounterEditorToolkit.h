@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "SGraphPanel.h"
 #include "ParalogueEncounter.h"
+
+#include "ParalogueEncounterGraphData.h"
 #include "Toolkits/AssetEditorToolkit.h"
 #include "ParalogueSegmentGraphNode.h"
 
@@ -65,9 +67,14 @@ private:
 	/// <summary>
 	/// Build the actual encounter data that will be used during runtime when the player encounters NPCs
 	/// </summary>
-	void BuildEncounterFromGraph();
+	void BuildIngameEncounterFromGraph();
 	//Recursive function for saving each child segment in the dialogue tree
 	UEncounterSegment* CreateOrFindSegmentForGraphNode(UParalogueSegmentGraphNode* node); //maybe some index or something idk
-	void ParseSegmentText(FText segmentText);
+	
+	/// <summary>
+	/// parse delimited string of NPC dialogue and face information into the version used by the gameplay-time UEncounterSegment
+	/// </summary>
+	/// <param name="segmentText"></param>
+	void ParseSegmentText(FText segmentText, TArray<TPair<FString, int>>* destinationArray);
 	FDelegateHandle graphChangeListenerHandler;
 };

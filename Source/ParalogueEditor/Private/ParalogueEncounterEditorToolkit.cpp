@@ -10,6 +10,7 @@
 #include "Editor/UnrealEd/Public/Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h" //why does this not require the full path but the above one does? i am questioning this information more...
 #include "ParalogueGraphSchema.h"
+
 #include "NodeEncounterSegmentData.h"
 
 //InObjects is the objects being referenced by the editor. the "open" working asset
@@ -164,6 +165,9 @@ void ParalogueEncounterEditorToolkit::OnGraphChanged(const FEdGraphEditAction& e
 
 
 	UpdateEncounterAssetFromGraph();
+
+	//just gonna put this here for now, not sure if theres a better place
+	BuildIngameEncounterFromGraph();
 }
 
 void ParalogueEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated(const FPropertyChangedEvent& event)
@@ -363,7 +367,7 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 			guidToPinMap.Add(assetInputPin->PinId, newUiPin);
 
 		}
-		
+
 
 		//---output pins section
 		for (UParalogueEncounterEdPinData* assetOutputPin : assetNode->OutputPins)
@@ -397,18 +401,22 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 }
 
 
-//the way this would be used is basically like compiling the encounter like code. whenever saving or trying to test, make sure this is what is updating the encounter
-//when user tries to delete a node, the part im unclear on right now is making sure to delete the correct segment along with that. But once that's figured out, attaching the correct segments together should just be a matter of "recompiling" the encounter (even though its not code, it basically would work like blueprints in that regard)
-void ParalogueEncounterEditorToolkit::BuildEncounterFromGraph()
+//the way this would be used is basically like compiling the encounter like code. This sets up the data that is actually used when the game runs 
+// whenever saving or trying to test, make sure this is what is updating the encounter
+void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 {
 	if (workingEncounterAsset == nullptr || uiDialogueGraph == nullptr)
 	{
 		return;
 	}
 
+	//clear array in working asset
+	workingEncounterAsset->Segments.Empty();
+
 	//array of graph segment nodes (like literally the ones in the graph)
 	TArray<UParalogueSegmentGraphNode*> graphSegmentNodes;
 	uiDialogueGraph->GetNodesOfClass(graphSegmentNodes);
+
 
 	//loop through each encounter segment in the graph
 	for (int i = 0; i < graphSegmentNodes.Num(); i++)
@@ -416,81 +424,140 @@ void ParalogueEncounterEditorToolkit::BuildEncounterFromGraph()
 		UParalogueSegmentGraphNode* thisNode = graphSegmentNodes[i];
 
 		//Start with the nodes with no inputs, and then recursively navigate their connections to save them
-		UEdGraphPin* inputPin = thisNode->FindPin(TEXT("Inputs"), EEdGraphPinDirection::EGPD_Input);
+		UEdGraphPin* inputPin = thisNode->FindPin(TEXT("Input"), EEdGraphPinDirection::EGPD_Input); //todo: man this manual hard-coded string in the check is a bit wonky
 
 		//for now, assume that if a node has inputs, its covered by the recursion. If there are no inputs, this is where the recursion should *start*
 		if (!inputPin->HasAnyConnections())
 		{
 			CreateOrFindSegmentForGraphNode(thisNode);
 		}
-		
+
 	}
 
+	//clear the temporary data from graph nodes
+	for (int i = 0; i < graphSegmentNodes.Num(); i++)
+	{
+		//UParalogueSegmentGraphNode* thisNode = graphSegmentNodes[i];
+
+		graphSegmentNodes[i]->SetSegmentTempData(nullptr);
+
+	}
 }
 
 UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphNode(UParalogueSegmentGraphNode* node)
 {
-	//int segmentIdx = paralogueEncounter->Segments.Add(new FEncounterSegment());
-	//FEncounterSegment* thisEncounterSegment = paralogueEncounter->Segments[segmentIdx];
+	//if there is already an encounter segment made, grab it
+	UEncounterSegment* thisEncounterSegment = node->GetSegmentTempData();
+	if (thisEncounterSegment != nullptr)
+	{
+		return thisEncounterSegment;
+	}
+
+	// Otherwise...
+	
 	//initialize a blank segment for this node. Don't add it to the asset yet, until we verify that there is not an existing segment already made for it
-	UEncounterSegment* thisEncounterSegment = NewObject<UEncounterSegment>();
+	thisEncounterSegment = NewObject<UEncounterSegment>();
 
 	//save the graph specific data (when this gets more complex it should get its own function)
 	//thisEncounterSegment->graphNodeData->Position = FVector2D(node->NodePosX, node->NodePosY);
 
 	int pinCount = node->Pins.Num();
-	int thisOutPinIndex = -1; //start at -1 so that we can just simply increment, and the first index will start at 0
+	int thisOutPinIndex = 0; //start at -1 so that we can just simply increment, and the first index will start at 0
+	// wait why not just move increment to end of if statement, so this can be zero like it normally would
+
+	// parse the text (and face) info for the segment into the version that will actually be used when the game is runnning, including actually placing it into that object
+	ParseSegmentText(node->GetNodeInfo()->CharacterLines, &thisEncounterSegment->NpcLinesWithFaces);
+
+
 	for (int j = 0; j < pinCount; j++) //loop through each pin on the node
 	{
 		UEdGraphPin* thisPin = node->Pins[j];
 
-		
-		if (thisPin->Direction == EEdGraphPinDirection::EGPD_Input)
-		{
-			//if its an input pin, check if a segment for this node has already been made
-			// (connected node amount is >1 and the other connection already had a segment made)
+		//if (thisPin->Direction == EEdGraphPinDirection::EGPD_Input)
+		//{
+		//	//// use input connections to check if there is already a segment made for this node
+		//	////if its an input pin, check if a segment for this node has already been made
+		//	//// (connected node amount is >1 and the other connection already had a segment made) 
 
-			//if so, get that segment and just return that (escape the loop and everything, no need to recreate exactly the same thing)
-				//thisEncounterSegment == whatever that is
+		//	////if so, get that segment and just return that (escape the loop and everything, no need to recreate exactly the same thing)
+		//	//	//thisEncounterSegment == whatever that is
+		//	//if (thisPin->LinkedTo.Num() > 1)
+		//	//{
 
-		}		
-		else if (thisPin->Direction == EEdGraphPinDirection::EGPD_Output) //im pretty sure output is the only other thing this could ever be, but i'd like a little insurance (plus its honestly just a bit more readable to me)
+		//	//}
+		//	//else if (thisPin->LinkedTo.Num() <= 1)// If there's only one connection, it means there isnt another way to get to this node in the graph (and this isnt a duplicate)
+		//	//{
+
+
+		//	//}
+
+
+		//}		
+		//else 
+		if (thisPin->Direction == EEdGraphPinDirection::EGPD_Output)
 		{
-			thisOutPinIndex++;
-			thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>()); //add a blank player option, which will be filled if there are any connections
+			
+			// a segment with no player options should (iirc) signal the end of the encounter, so why create a placeholder? Unless
+			//thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>()); //add a blank/default player option, which will be filled if there are any connections
 
 			if (thisPin->HasAnyConnections()) //if its an output pin with a connection... Nesting the if's like this so that we can accurately skip pins with no connection (assuming we want to allow that...? idk doesnt seem like a big deal rn)
 			{
 				//TArray<UEdGraphPin*> links = thisPin->LinkedTo;
 				UEdGraphPin* linkedPin = thisPin->LinkedTo[0]; //just the first index, because if these output pins are ever linked to more than one thing, something else is more broken than this would be
 				UEdGraphNode* linkedNode = linkedPin->GetOwningNode(); //todo - work out having multiple outputs connected to one input (avoid creating more than one segment for it in that case, etc...)
-				if (UParalogueSegmentGraphNode* npcResponseNode = Cast<UParalogueSegmentGraphNode>(linkedNode))  //if its a segment node, link up the player option to the result of that option
+				if (UParalogueSegmentGraphNode* npcResponseNode = Cast<UParalogueSegmentGraphNode>(linkedNode))  //if its a segment node, link up the player option to the response to that option
 				{
-					//save pointer to segment in the asset (doing this first so that the array does not basically become inverted, with the ending node first etc. Probably not a big deal but my brain has decided its Important idk)
+					//save pointer to segment in the asset (doing this first, before recursion call, so that the array does not basically become inverted, with the ending node first etc. Probably not a big deal but my brain has decided its Important idk) (if array is not used for gameplay, the array becoming inverted or not probably literally does not matter at all except for maybe debugging convenience)
 					workingEncounterAsset->Segments.Add(thisEncounterSegment);
 
-					//PARSE HERE ?
+					//PARSE HERE ? no, silly goose. why would we parse this encounter segment in the loop section reserved for setting up/dealing with the next recursion iteration
 
 					//create the segment for the connected node (this is where the recursion comes in)
 					UEncounterSegment* npcResponse = CreateOrFindSegmentForGraphNode(npcResponseNode);
 
 					//THEN, add that segment to the responses for this segment
-					thisEncounterSegment->PlayerOptionToNextSegment[thisOutPinIndex] = TPair<FText, UEncounterSegment*>(FText(), npcResponse);
+					//thisEncounterSegment->PlayerOptionToNextSegment[thisOutPinIndex] = TPair<FText, UEncounterSegment*>(FText(), npcResponse);
+					if (node->GetNodeInfo()->PlayerResponseOptions.IsValidIndex(thisOutPinIndex))
+					{
+						thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>(node->GetNodeInfo()->PlayerResponseOptions[thisOutPinIndex], npcResponse));
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("error when trying to build encounter tree: Player response pins in segment data found to be null. No player responses added for this node? At least not under the hood (Dev note: consider automatically adding in this case)"));
+						UE_LOG(LogTemp, Warning, TEXT("out pin idx tried: %d"), &thisOutPinIndex);
+					}
 				}
 			}
+			thisOutPinIndex++;
 
 		}
 	}
 	return thisEncounterSegment;
 }
 
-void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText)
+void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray<TPair<FString, int>>* destinationArray)
 {
-	FString lines = segmentText.ToString(); //docs say that this is potentially lossy for some languages, however it does not appear that will affect this use case? 
+	//first parse lines
+	TArray<FString> textAndFaceData;
+	FString lines = segmentText.ToString(); //docs say that this is potentially lossy for some languages, however it does not appear that will affect this use case?  || note: by doing this in editor instead of runtime, it actually would
 	FString delimiter = L"|,";
 	//TArray<FString> splitLines;// = [];
-	lines.ParseIntoArray(currentTextPages, *delimiter, false); //uuuuuh apparently this is exponential complexity so if the computer starts really dying keep this in mind
+	lines.ParseIntoArray(textAndFaceData, *delimiter, false); //uuuuuh apparently this is exponential complexity so if the computer starts really dying keep this in mind
 
+	//then separate the faces from the lines
+	for (int i = 0; i < textAndFaceData.Num(); i++)
+	{
+		//split string
+		FString faceNumberStr;
+		FString npcLinesText;
+		textAndFaceData[i].Split(L"|", &faceNumberStr, &npcLinesText); //supposed to be more efficient than ParseIntoArray
+
+		//convert to int
+		int faceNumber = FCString::Atoi(*faceNumberStr); //this function is apparently "unsafe; no way to indicate errors" https://unreal.gg-labs.com/wiki-archives/macros-and-data-types/string-conversions#fstring-to-integer
+
+		//write to array
+		destinationArray->Add(TPair<FString, int> (npcLinesText, faceNumber));
+	}
 }
 
 

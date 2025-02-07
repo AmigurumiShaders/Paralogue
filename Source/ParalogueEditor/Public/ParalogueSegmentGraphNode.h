@@ -21,7 +21,7 @@ class PARALOGUEEDITOR_API UParalogueSegmentGraphNode : public UEdGraphNode
 public:
 	UParalogueSegmentGraphNode();
 
-	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override;// { return nodeTitle; }
+	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override { return nodeTitle; }
 	virtual FLinearColor GetNodeTitleColor() const override { return nodeTitleColor; }
 	virtual bool CanUserDeleteNode() const override { return canUserDelete; }
 	virtual void GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const override;
@@ -33,7 +33,8 @@ public:
 	void SetNodeInfo(class UNodeEncounterSegmentData* data) { segmentNodeData = data; }
 	class UNodeEncounterSegmentData* GetNodeInfo() { return segmentNodeData; }
 
-	//FEncounterSegment* GetSegmentData() { return thisSegment; }
+	UEncounterSegment* GetSegmentTempData() { return processedTempData; }
+	void SetSegmentTempData(UEncounterSegment* input) { processedTempData = input; }
 private:
 	FText nodeTitle = FText::FromString(TEXT("Paralogue Segment"));
 	FLinearColor nodeTitleColor = FLinearColor(FColor::Cyan);
@@ -46,6 +47,8 @@ private:
 	FExecuteAction deleteNodeLambda;
 
 	class UNodeEncounterSegmentData* segmentNodeData;
+	//temporarily holds the processed encounter segment, making it easier to hook up with multiple inputs to this node
+	UEncounterSegment* processedTempData = nullptr;
 
 	//FEncounterSegment* thisSegment; //pointer to the corresponding segment this node references (is this too coupled? i think its ok...)
 };

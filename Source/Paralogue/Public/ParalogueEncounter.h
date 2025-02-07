@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
-#include "ParalogueEncounterGraphData.h"
+
+#include "Containers/Map.h"
 
 //#include "<functional>" //was not finding it and i dont care right now actually
 #include "ParalogueEncounter.generated.h"
@@ -33,16 +34,23 @@ UCLASS()
 class PARALOGUE_API UEncounterSegment : public UObject
 {
 	GENERATED_BODY()
+	UEncounterSegment()
+	{
+		NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
+	}
 public:
 
 	UPROPERTY(EditAnywhere, Category = "Testing")
 	int PlayerResponseIndex; //for testing the logic of selecting the right npc response based on the player's selection (NOT planning to use this during runtime)
 
-	UPROPERTY(BlueprintReadOnly)
+	///*player dialogue options*/
+	//may actually need to be uprop, so they can be saved(?)
+	//UPROPERTY(BlueprintReadOnly)
 	TArray<TPair<FString, int>> NpcLinesWithFaces; //lines of text the NPC says paired with the corresponding face
-	UPROPERTY(BlueprintReadOnly)
-	TArray<TPair<FText, int>> PlayerOptionToSegmentIdx; //use a tpair because even if we could use a tmap, there is no need to search by key/value. just idx
-	UPROPERTY(BlueprintReadOnly)
+	//UPROPERTY(BlueprintReadOnly)
+	//pretty sure this was because a struct couldn't have a pointer to it. switch code to use this as a fallback if the pointer version is being too difficult
+	//TArray<TPair<FText, int>> PlayerOptionToSegmentIdx; //use a tpair because even if we could use a tmap, there is no need to search by key/value. just idx
+	//UPROPERTY(BlueprintReadOnly)
 	TArray<TPair<FText, UEncounterSegment*>> PlayerOptionToNextSegment;
 
 	///*Detailed description of this segment, such as for the situation it is intended for. Like a code comment*/
@@ -97,6 +105,7 @@ public:
 	//FSegmentGraphNodeData* graphNodeData;
 };
 
+	class UParalogueEncounterEdGraphData; //forward delcaration, because we need to be able to use UEncounterSegment in UNodeEncounterSegmentData, but without creating a circular dependency
 UCLASS()
 class PARALOGUE_API UParalogueEncounter : public UObject
 {
@@ -109,11 +118,12 @@ public:
 	//void SetPreSaveListener(std::function<void()> onPreSaveListener) { _onPreSaveListener = onPreSaveListener; }
 	//virtual void PreSave(FObjectPreSaveContext saveContext) override;
 
-	//things to facilitate plugin testing, may or may not be helpful to test the 
 	UFUNCTION(CallInEditor, Category = "Testing")
-	void LogData();
+	void LogAllSegmentData();
 	UFUNCTION(CallInEditor, Category = "Testing")
-	void InitSegment();
+	void LogNextPage();
+	//UFUNCTION(CallInEditor, Category = "Testing")
+	//void InitSegment();
 	
 
 	/*Detailed description of this encounter, such as for the situation it is intended for. Like a code comment*/
@@ -133,7 +143,6 @@ public:
 	//FEncounterSegment* AddEncounterSegment();
 	//FEncounterSegment* AddEncounterSegment(int playerOptionIdx, FEncounterSegment* parentSegment);
 	void ClearEncounter(); //clears the segments, might be useful for saving the asset...
-
 	void SetGraphData(UParalogueEncounterEdGraphData* data) { graphData = data; }
 	UParalogueEncounterEdGraphData* GetGraphData() { return graphData; }
 	UPROPERTY(BlueprintReadOnly)
@@ -142,13 +151,13 @@ private:
 	//std::function<void()> _onPreSaveListener = nullptr;
 
 	////"page" is the term we'll use for each fill of the dialogue bubble
-	//TArray<FString> currentTextPages;
+	TArray<FString> currentTextPages;
 	//TArray<int> currentFaceList;
 	int currentPageCount;
 	int currentPageIndex;
 
-	UPROPERTY(BlueprintReadOnly)
-	FString currentLine; /// todo: ououuouhhhh what was that about getters and setters again oops i forgot to go figure out how they work in unreal
+	//UPROPERTY(BlueprintReadOnly)
+	FString CurrentLine; /// todo: ououuouhhhh what was that about getters and setters again oops i forgot to go figure out how they work in unreal
 	//if i can just put these private without much effort that may be the way to go. unity brain just defaults to public variables for editor things for some reason even though i know serialize field is a thing
 	//actually pretty sure this current line thing was just for console outputting, remove if not needed for UI (?)
 

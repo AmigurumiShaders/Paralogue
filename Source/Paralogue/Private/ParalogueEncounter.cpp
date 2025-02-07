@@ -4,6 +4,8 @@
 #include "ParalogueEncounter.h"
 #include "UObject/ObjectSaveContext.h"
 
+#include "ParalogueEncounterGraphData.h"
+
 UParalogueEncounter::UParalogueEncounter()
 {
 	//InitSegment(0);
@@ -16,25 +18,46 @@ UParalogueEncounter::UParalogueEncounter()
 //	}
 //}
 
-void UParalogueEncounter::LogData()
+void UParalogueEncounter::LogAllSegmentData()
+{
+	for (int i = 0; i < Segments.Num(); i++)
+	{
+		UE_LOG(LogTemp, Log, TEXT("\n vvvvvvvvvvvvv --- segment: %d"), i)
+		for (int l = 0; l < Segments[i]->NpcLinesWithFaces.Num(); l++)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Line: %s"), *Segments[i]->NpcLinesWithFaces[l].Key)
+			UE_LOG(LogTemp, Log, TEXT("Face: %d"), Segments[i]->NpcLinesWithFaces[l].Value)
+
+		}
+
+		for (int l = 0; l < Segments[i]->PlayerOptionToNextSegment.Num(); l++)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Line: %s"), *Segments[i]->PlayerOptionToNextSegment[l].Key.ToString())
+			//UE_LOG(LogTemp, Log, TEXT("Face: %s"), Segments[i]->PlayerOptionToNextSegment[l].Value) a whole new segment, leave it
+
+		}
+	}
+}
+
+void UParalogueEncounter::LogNextPage()
 {
 	PageForward();
 	UE_LOG(LogTemp, Log, TEXT("line: %s"), *CurrentLine)//.ToString()) //make this output the resulting dialogue path/route? give it test values maybe?
 }
 
-void UParalogueEncounter::InitSegment() //todo: need to make sure we reinit whenever changes are made to the asset
-{	
-	//uuuh call each fill of the dialogue bubble "pages" for now?
-	//ParseSegment(segmentIndex);
-	ParseSegment(0);
-	currentPageCount = currentTextPages.Num();
-
-	//set the variables to the first page values
-	currentPageIndex = 0;
-	CurrentLine = currentTextPages[currentPageIndex];
-
-	//todo: also need to implement separating the character face number from the rest of the text oops
-}
+//void UParalogueEncounter::InitSegment() //todo: need to make sure we reinit whenever changes are made to the asset
+//{	
+//	//uuuh call each fill of the dialogue bubble "pages" for now?
+//	//ParseSegment(segmentIndex);
+//	ParseSegment(0);
+//	currentPageCount = currentTextPages.Num();
+//
+//	//set the variables to the first page values
+//	currentPageIndex = 0;
+//	CurrentLine = currentTextPages[currentPageIndex];
+//
+//	//todo: also need to implement separating the character face number from the rest of the text oops
+//}
 
 //FEncounterSegment* UParalogueEncounter::AddEncounterSegment()
 //{

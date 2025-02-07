@@ -9,6 +9,11 @@
 UParalogueSegmentGraphNode::UParalogueSegmentGraphNode()
 {
 	graph = this->GetGraph();
+
+#pragma region Context Menu Lambdas
+	///lambdas for context menu actions (when you right click on a node)
+
+
 	createResponsePinLambda = FExecuteAction::CreateLambda(
 		[this]() {
 			int pinNum = this->Pins.Num();
@@ -38,21 +43,18 @@ UParalogueSegmentGraphNode::UParalogueSegmentGraphNode()
 	);
 	deleteNodeLambda = FExecuteAction::CreateLambda(
 		[this]() {
-			//graph->RemoveNode(this);
+			graph->RemoveNode(this);
 			this->SyncPinsWithResponses();
+			UE_LOG(LogTemp, Warning, TEXT("kirby video has this as removing from the end of the array and then syncing, but I want it to just trigger sync when array elements are removeed <-wow i said that and dont even remember why. Did i mix up between deleting node and lambda??"))
 			//kirby video has this as removing from the end of the array and then syncing, but I want it to just trigger sync when array elements are removeed
 		}
 
 	);
-
+#pragma endregion
 	//create a corresponding segment in the asset itself (again, may be too coupled...)
 
 }
 
-FText UParalogueSegmentGraphNode::GetNodeTitle(ENodeTitleType::Type titleType) const
-{
-	return segmentNodeData->Description; //just description for now because thats basically what I already had (can add actual title later)
-}
 
 void UParalogueSegmentGraphNode::GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const
 {

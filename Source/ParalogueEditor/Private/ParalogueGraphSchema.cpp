@@ -49,8 +49,8 @@ UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* 
 	newSegmentNode->SetNodeInfo(NewObject<UNodeEncounterSegmentData>(newSegmentNode));//kirby video said he'd talk more about this later, but he didnt last time he said that...
 
 
-	//Leaving the input node text blank, unless i think of something better to call it. its not like we're doing any operations on the content of the previous segment of dialogue. its purely just a linker
-	UEdGraphPin* inputPin = newSegmentNode->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, TEXT("")); //only need the return value of this one
+	// i want to find a better name for the input node...
+	UEdGraphPin* inputPin = newSegmentNode->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, TEXT("Input")); //only need the return value of this one
 	newSegmentNode->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Unsynced Response")); //just something for now, maybe change it to "default" or something
 
 	

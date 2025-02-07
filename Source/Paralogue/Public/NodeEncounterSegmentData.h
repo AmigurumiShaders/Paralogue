@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+//#include "ParalogueEncounter.h"
 
 #include "NodeEncounterSegmentData.generated.h"
 
@@ -32,6 +33,5 @@ public:
 	//i wonder if the option to manually select these should be given in blueprints?
 	//maybe most practical thing to do is just some way to let user run whatever code they need to enable/disable things?
 	//this option thing might be good if i really wanted to focus on minimizing the coding required by the user, but its not enough of a priority right now
-
 
 };
