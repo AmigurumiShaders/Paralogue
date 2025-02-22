@@ -36,12 +36,20 @@ class PARALOGUE_API UEncounterSegment : public UObject
 	GENERATED_BODY()
 	UEncounterSegment()
 	{
-		NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
+		NpcLinesWithFaces.Add(TPair<FString, int>(FString("[ctor placeholder]"), 0));
+		//NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
 	}
 public:
 
-	UPROPERTY(EditAnywhere, Category = "Testing")
-	int PlayerResponseIndex; //for testing the logic of selecting the right npc response based on the player's selection (NOT planning to use this during runtime)
+	TArray<FString> NpcLines;
+	TArray<int> NpcFaces;
+
+	TArray<FText> PlayerOption;
+	//selector for the next dialogue segment, match idx with PlayerOption idx
+	TArray<UEncounterSegment*> NextSegmentSelector;
+
+	//UPROPERTY(EditAnywhere, Category = "Testing")
+	//int PlayerResponseIndex; //for testing the logic of selecting the right npc response based on the player's selection (NOT planning to use this during runtime)
 
 	///*player dialogue options*/
 	//may actually need to be uprop, so they can be saved(?)
@@ -106,12 +114,13 @@ public:
 };
 
 	class UParalogueEncounterEdGraphData; //forward delcaration, because we need to be able to use UEncounterSegment in UNodeEncounterSegmentData, but without creating a circular dependency
-UCLASS()
+UCLASS(BlueprintType)
 class PARALOGUE_API UParalogueEncounter : public UObject
 {
 	GENERATED_BODY()
 	
 public:
+
 	UParalogueEncounter();
 
 	//all this because apparently the other way doesnt work with connectins...
@@ -122,6 +131,8 @@ public:
 	void LogAllSegmentData();
 	UFUNCTION(CallInEditor, Category = "Testing")
 	void LogNextPage();
+	UPROPERTY(EditAnywhere, Category = "Testing")
+	int testResponseIndex;
 	//UFUNCTION(CallInEditor, Category = "Testing")
 	//void InitSegment();
 	
@@ -133,11 +144,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Content")
 	TArray<UEncounterSegment*> Segments; //shoudl this be a pointer actually? But i cannot make the struct a pointer...
 
-	//UFUNCTION(BlueprintCallable)
-	//float DrawSample();
+	UEncounterSegment* startingSegment; //not necessary?
 
-	//float Mean;
-	//float StandardDeviation;
+	UFUNCTION(BlueprintCallable)
+	FString GetCurrentNpcText();
+	//Sets up the encounter to the starting conditions, including setting the current line to the first line of dialogue
+	UFUNCTION(BlueprintCallable)
+	void SetEncounterToStart();
+
+
 
 	////todo: on second thought these might be better suited for the toolkit part of the editor, but for now im just trying to Think...
 	//FEncounterSegment* AddEncounterSegment();
@@ -147,25 +162,38 @@ public:
 	UParalogueEncounterEdGraphData* GetGraphData() { return graphData; }
 	UPROPERTY(BlueprintReadOnly)
 	UParalogueEncounterEdGraphData* graphData = nullptr;
+	
+	//Input the index corresponding to the response the player selected. This function will select the next segment based on that index (or exit the dialogue)
+	//Enter -1 to exit encounter
+	UFUNCTION(BlueprintCallable)
+	void ProcessPlayerResponse(int playerSelected);
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FText> displayedPlayerOptions;
 private:
 	//std::function<void()> _onPreSaveListener = nullptr;
 
+	//Sets up page/response arrays based on what currentSegment is set to (remember to set currentSegment BEFORE calling this)
+	void SetUpNewSegment();
+	//just for now until the splitting of tpair
+	//TArray<TPair<FString, int>>* currentNpcPair;
 	////"page" is the term we'll use for each fill of the dialogue bubble
 	TArray<FString> currentTextPages;
 	//TArray<int> currentFaceList;
 	int currentPageCount;
 	int currentPageIndex;
 
+
 	//UPROPERTY(BlueprintReadOnly)
-	FString CurrentLine; /// todo: ououuouhhhh what was that about getters and setters again oops i forgot to go figure out how they work in unreal
+	UEncounterSegment* currentSegment;
+	FString currentLine; /// todo: ououuouhhhh what was that about getters and setters again oops i forgot to go figure out how they work in unreal
 	//if i can just put these private without much effort that may be the way to go. unity brain just defaults to public variables for editor things for some reason even though i know serialize field is a thing
 	//actually pretty sure this current line thing was just for console outputting, remove if not needed for UI (?)
 
 	FString endOfSegment = "Reached end of segment";
 
-	UFUNCTION()
-	void PageForward(); //advances the current dialogue display by one page
-	//may be worth generating all of this on import rather than runtime, or at least before the player starts the game. Either way, if we do localizations this will affect how that should be implemented
-	void ParseSegment(const int segmentIndex);
+	//advances the current dialogue display by one page
+	UFUNCTION(BlueprintCallable)
+	void PageForward(); 
 
 };
