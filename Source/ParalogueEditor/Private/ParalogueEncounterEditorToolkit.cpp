@@ -468,16 +468,19 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 	// wait why not just move increment to end of if statement, so this can be zero like it normally would
 
 	//clear the array first
-	thisEncounterSegment->NpcLinesWithFaces.Empty();
+	thisEncounterSegment->NpcLines.Empty();
+	thisEncounterSegment->NpcFaceSelector.Empty();
 	if (node->GetNodeInfo()->CharacterLines.IsEmpty())
 	{
 		//if there is no text to add, add placeholder text instead of leaving blank (prevents anything from breaking from trying to run an empty segment, and also tells the user rather than having this just silently fail)
-		thisEncounterSegment->NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
+		//thisEncounterSegment->NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
+		thisEncounterSegment->NpcLines.Add(FString("[Dialogue segment not implemented]"));
+		thisEncounterSegment->NpcFaceSelector.Add(0);
 	}
 	else
 	{
 		// parse the text (and face) info for the segment into the version that will actually be used when the game is runnning, including actually placing it into that object
-		ParseSegmentText(node->GetNodeInfo()->CharacterLines, &thisEncounterSegment->NpcLinesWithFaces);
+		ParseSegmentText(node->GetNodeInfo()->CharacterLines, &thisEncounterSegment->NpcLines, &thisEncounterSegment->NpcFaceSelector);
 	}
 
 	for (int j = 0; j < pinCount; j++) //loop through each pin on the node
@@ -505,15 +508,16 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 
 					if (node->GetNodeInfo()->PlayerResponseOptions.IsEmpty())
 					{
-						UE_LOG(LogTemp, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLinesWithFaces[0].Key);
-						UE_LOG(LogTemp, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLinesWithFaces[1].Key);
+						UE_LOG(LogTemp, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLines[0]);
 					}
 
 					//THEN, add that segment to the responses for this segment
 					//thisEncounterSegment->PlayerOptionToNextSegment[thisOutPinIndex] = TPair<FText, UEncounterSegment*>(FText(), npcResponse);
 					if (node->GetNodeInfo()->PlayerResponseOptions.IsValidIndex(thisOutPinIndex))
 					{
-						thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>(node->GetNodeInfo()->PlayerResponseOptions[thisOutPinIndex], npcResponse));
+						//thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>(node->GetNodeInfo()->PlayerResponseOptions[thisOutPinIndex], npcResponse));
+						thisEncounterSegment->PlayerOptions.Add(FText(node->GetNodeInfo()->PlayerResponseOptions[thisOutPinIndex]));
+						thisEncounterSegment->NextSegmentSelector.Add(npcResponse);
 					}
 					else
 					{
@@ -551,6 +555,33 @@ void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray
 
 		//write to array
 		destinationArray->Add(TPair<FString, int> (npcLinesText, faceNumber));
+	}
+}
+
+void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination)
+{
+	//first split lines, leaving the face with it
+	TArray<FString> textAndFaceData;
+	FString lines = segmentText.ToString(); //docs say that this is potentially lossy for some languages, however it does not appear that will affect this use case?  || note: by doing this in editor instead of runtime, it actually would
+	FString delimiter = L"|,";
+	//TArray<FString> splitLines;// = [];
+	lines.ParseIntoArray(textAndFaceData, *delimiter, false); //uuuuuh apparently this is exponential complexity so if the computer starts really dying keep this in mind
+
+	//then separate the faces from the lines
+	for (int i = 0; i < textAndFaceData.Num(); i++)
+	{
+		//split string
+		FString faceNumberStr;
+		FString npcLinesText;
+		textAndFaceData[i].Split(L"|", &faceNumberStr, &npcLinesText); //supposed to be more efficient than ParseIntoArray
+
+		//convert to int
+		int faceNumber = FCString::Atoi(*faceNumberStr); //this function is apparently "unsafe; no way to indicate errors" https://unreal.gg-labs.com/wiki-archives/macros-and-data-types/string-conversions#fstring-to-integer
+
+		//write to arrays
+		//destinationArray->Add(TPair<FString, int>(npcLinesText, faceNumber));
+		dialogueTextDestination->Add(npcLinesText);
+		dialogueFacesDestination->Add(faceNumber);
 	}
 }
 

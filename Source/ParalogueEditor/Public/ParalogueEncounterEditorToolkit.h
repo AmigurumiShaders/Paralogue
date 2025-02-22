@@ -72,9 +72,18 @@ private:
 	UEncounterSegment* CreateOrFindSegmentForGraphNode(UParalogueSegmentGraphNode* node); //maybe some index or something idk
 	
 	/// <summary>
-	/// parse delimited string of NPC dialogue and face information into the version used by the gameplay-time UEncounterSegment
+	/// [[[DEPRECATED: not using tpair array anymore]]] parse delimited string of NPC dialogue and face information into the version used by the gameplay-time UEncounterSegment
 	/// </summary>
 	/// <param name="segmentText"></param>
 	void ParseSegmentText(FText segmentText, TArray<TPair<FString, int>>* destinationArray);
+	
+	
+	/// <summary>
+	/// Parse delimited string of NPC dialogue and face information into the variables used by the gameplay-time UEncounterSegment (the two arrays with corresponding indicies)
+	/// </summary>
+	/// <param name="segmentText">text containing all dialogue and face data in one string</param>
+	/// <param name="dialogueTextDestination">Reference to array to write text data to</param>
+	/// <param name="dialogueFacesDestination">Reference to array to write face data to</param>
+	void ParseSegmentText(FText segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination);
 	FDelegateHandle graphChangeListenerHandler;
 };
