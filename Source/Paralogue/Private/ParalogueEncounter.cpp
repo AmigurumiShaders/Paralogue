@@ -6,6 +6,8 @@
 
 #include "ParalogueEncounterGraphData.h"
 
+DEFINE_LOG_CATEGORY(ParalogueRuntime);
+
 UParalogueEncounter::UParalogueEncounter()
 {
 	//InitSegment(0);
@@ -66,7 +68,7 @@ void UParalogueEncounter::SetUpNewSegment()
 	//make sure currentSegment is set
 	if (currentSegment == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("\n currentSegment has not been set!!)"));
+		UE_LOG(ParalogueRuntime, Warning, TEXT("\n currentSegment has not been set!!)"));
 		return;
 	}
 
@@ -89,7 +91,7 @@ void UParalogueEncounter::SetUpNewSegment()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("\n Tried to find current line before currentTextPages was properly set (array appears to be empty)"))
+		UE_LOG(ParalogueRuntime, Warning, TEXT("\n Tried to find current line before currentTextPages was properly set (array appears to be empty)"))
 	}
 
 	// set player response options
@@ -118,7 +120,7 @@ void UParalogueEncounter::PageForward()
 		{
 
 			AwaitingPlayerResponse = true;
-			UE_LOG(LogTemp, Log, TEXT("\n End of segment reached, and response options appear to be available."))
+			UE_LOG(ParalogueRuntime, Log, TEXT("\n End of segment reached, and response options appear to be available."))
 
 		}
 		else
@@ -148,7 +150,7 @@ void UParalogueEncounter::ProcessPlayerResponse(int playerSelectedIdx)
 	//currentPageIndex = 0;
 	SetUpNewSegment();
 
-	UE_LOG(LogTemp, Log, TEXT("\n Emptied displayed response array"))
+	UE_LOG(ParalogueRuntime, Log, TEXT("\n Emptied displayed response array"))
 }
 
 

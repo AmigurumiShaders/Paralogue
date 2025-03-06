@@ -21,7 +21,7 @@ class PARALOGUEEDITOR_API UParalogueSegmentGraphNode : public UEdGraphNode
 public:
 	UParalogueSegmentGraphNode();
 
-	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override { return nodeTitle; }
+	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override { return segmentNodeData->Title; }
 	virtual FLinearColor GetNodeTitleColor() const override { return nodeTitleColor; }
 	virtual bool CanUserDeleteNode() const override { return canUserDelete; }
 	virtual void GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const override;
@@ -36,7 +36,7 @@ public:
 	UEncounterSegment* GetSegmentTempData() { return processedTempData; }
 	void SetSegmentTempData(UEncounterSegment* input) { processedTempData = input; }
 private:
-	FText nodeTitle = FText::FromString(TEXT("Paralogue Segment"));
+	FText nodeTitle; //= FText::FromString(TEXT("Paralogue Segment"));
 	FLinearColor nodeTitleColor = FLinearColor(FColor::Cyan);
 	bool canUserDelete = true;
 

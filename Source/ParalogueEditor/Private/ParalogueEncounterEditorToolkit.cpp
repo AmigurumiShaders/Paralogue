@@ -430,6 +430,7 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 		if (!inputPin->HasAnyConnections())
 		{
 			workingEncounterAsset->startingSegment = CreateOrFindSegmentForGraphNode(thisNode);
+			//workingEncounterAsset->nonPtrSegment = *(workingEncounterAsset->startingSegment);
 		}
 
 	}
@@ -446,22 +447,21 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 
 UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphNode(UParalogueSegmentGraphNode* node)
 {
-	//if there is already an encounter segment made, grab it
+	//Don't want duplicate segments, so just make sure there isn't already one that we can just grab instead
 	UEncounterSegment* thisEncounterSegment = node->GetSegmentTempData();
 	if (thisEncounterSegment != nullptr)
 	{
 		return thisEncounterSegment;
 	}
-
-	// Otherwise...
+	//===================================
 	
-	//initialize a blank segment for this node. Don't add it to the asset yet, until we verify that there is not an existing segment already made for it
-	thisEncounterSegment = NewObject<UEncounterSegment>();
+
+
+	//init blank segment for the node, make sure to set the Encounter asset as the outer so that the segments aren't wiped away when the editor closes
+	thisEncounterSegment = NewObject<UEncounterSegment>(workingEncounterAsset);
 	//save pointer to segment in the asset (doing this first, before recursion call, so that the array does not basically become inverted, with the ending node first etc. Probably not a big deal but my brain has decided its Important idk) (if array is not used for gameplay, the array becoming inverted or not probably literally does not matter at all except for maybe debugging convenience)
 	workingEncounterAsset->Segments.Add(thisEncounterSegment);
 
-	//save the graph specific data (when this gets more complex it should get its own function)
-	//thisEncounterSegment->graphNodeData->Position = FVector2D(node->NodePosX, node->NodePosY);
 
 	int pinCount = node->Pins.Num();
 	int thisOutPinIndex = 0; //start at -1 so that we can just simply increment, and the first index will start at 0

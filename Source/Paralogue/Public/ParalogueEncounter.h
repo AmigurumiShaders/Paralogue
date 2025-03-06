@@ -13,6 +13,8 @@
 //#include "<functional>" //was not finding it and i dont care right now actually
 #include "ParalogueEncounter.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(ParalogueRuntime, Log, All);
+
 //USTRUCT(BlueprintType) struct FSegmentGraphNodeData
 //{
 //	GENERATED_USTRUCT_BODY()
@@ -119,8 +121,9 @@ public:
 	//[todo: probably should use props rather than public variables for that array]
 	UPROPERTY(VisibleAnywhere, Category = "Content")
 	TArray<UEncounterSegment*> Segments; 
-
+	UPROPERTY(VisibleAnywhere)
 	UEncounterSegment* startingSegment; //not necessary?
+
 
 	UFUNCTION(BlueprintCallable)
 	FString GetCurrentNpcText();
