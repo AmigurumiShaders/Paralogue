@@ -48,7 +48,6 @@ private:
 
 	class UNodeEncounterSegmentData* segmentNodeData;
 	//temporarily holds the processed encounter segment, making it easier to hook up with multiple inputs to this node
-	UEncounterSegment* processedTempData = nullptr;
-
-	//FEncounterSegment* thisSegment; //pointer to the corresponding segment this node references (is this too coupled? i think its ok...)
+	UEncounterSegment* processedTempData = nullptr; // I still am unaware if there is a better way of avoiding duplicates. Going with this simply appears to be the most effective use of my time with my current knowledge.
+	
 };

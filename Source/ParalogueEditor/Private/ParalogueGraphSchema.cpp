@@ -25,17 +25,30 @@ const FPinConnectionResponse UParalogueGraphSchema::CanCreateConnection(const UE
 {
 	if (a == nullptr || b == nullptr)
 	{
-		//trying to connect pin to itself (should not even be possible??)
-		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("LOL DEV FORGOR TO CHANGE THIS TO SOMETHING USEFUL POINT AND LAUGH"));
+		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("One or both pins in this connection were found to be null"));
 	}
 	if (a->Direction == b->Direction)
 	{
 		//cannot connect pins of the same direction together or something
-		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("LOL DEV FORGOR TO CHANGE THIS TO SOMETHING USEFUL POINT AND LAUGH"));
+		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Cannot connect pins of the same direction"));
 	}
 
 	//this enforces exclusive connections, may want to change this depending on dialogue needs (multiple in/out connections may make sense)
-	return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_AB, TEXT(""));
+	//return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_AB, TEXT(""));
+
+	// Want to allow multiple connections to an input pin, but not to an output pin (the dialogue options are based on output pins so this would cause problems)
+	if (b->Direction == EEdGraphPinDirection::EGPD_Input)
+	{
+		//if b is input, that makes A an output
+		return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_A, TEXT(""));
+	}
+	if (b->Direction == EEdGraphPinDirection::EGPD_Output)
+	{
+		//if b is output, that makes A an input
+		return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_B, TEXT(""));
+	}
+
+	return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Undefined connection request"));
 }
 
 UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* fromPin, const FVector2D location, bool bSelectNewNode)

@@ -13,6 +13,8 @@
 
 #include "NodeEncounterSegmentData.h"
 
+DEFINE_LOG_CATEGORY(ParalogueEditor);
+
 //InObjects is the objects being referenced by the editor. the "open" working asset
 void ParalogueEncounterEditorToolkit::InitEditor(const TArray<UObject*>& InObjects)
 {
@@ -161,6 +163,8 @@ void ParalogueEncounterEditorToolkit::OnClose()
 //}
 void ParalogueEncounterEditorToolkit::OnGraphChanged(const FEdGraphEditAction& editAction)
 {
+	UE_LOG(ParalogueEditor, Log, TEXT("OnGraphChanged triggered"));
+
 	//apparently this doesnt actually get called when you link pins together???
 
 
@@ -413,7 +417,7 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 	//clear array in working asset
 	workingEncounterAsset->Segments.Empty();
 
-	//array of graph segment nodes (like literally the ones in the graph)
+	//array of graph segment nodes (like literally the ones in the UI graph)
 	TArray<UParalogueSegmentGraphNode*> graphSegmentNodes;
 	uiDialogueGraph->GetNodesOfClass(graphSegmentNodes);
 
@@ -508,7 +512,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 
 					if (node->GetNodeInfo()->PlayerResponseOptions.IsEmpty())
 					{
-						UE_LOG(LogTemp, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLines[0]);
+						UE_LOG(ParalogueEditor, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLines[0]);
 					}
 
 					//THEN, add that segment to the responses for this segment
@@ -521,8 +525,8 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 					}
 					else
 					{
-						UE_LOG(LogTemp, Warning, TEXT("error when trying to build encounter tree: Player response pins in segment data found to be null. No player responses added for this node? At least not under the hood (Dev note: consider automatically adding in this case)"));
-						UE_LOG(LogTemp, Warning, TEXT("out pin idx tried: %d"), &thisOutPinIndex);
+						UE_LOG(ParalogueEditor, Warning, TEXT("error when trying to build encounter tree: Player response pins in segment data found to be null. No player responses added for this node? At least not under the hood (Dev note: consider automatically adding in this case)"));
+						UE_LOG(ParalogueEditor, Warning, TEXT("out pin idx tried: %d"), &thisOutPinIndex);
 					}
 				}
 			}
@@ -530,6 +534,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 
 		}
 	}
+	node->SetSegmentTempData(thisEncounterSegment);
 	return thisEncounterSegment;
 }
 

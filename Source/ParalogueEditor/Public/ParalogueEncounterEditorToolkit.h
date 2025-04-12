@@ -10,6 +10,9 @@
 #include "Toolkits/AssetEditorToolkit.h"
 #include "ParalogueSegmentGraphNode.h"
 
+
+DECLARE_LOG_CATEGORY_EXTERN(ParalogueEditor, Log, All);
+
 /**
  * 
  */
