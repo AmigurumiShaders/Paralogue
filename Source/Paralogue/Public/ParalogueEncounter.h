@@ -127,6 +127,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FString GetCurrentNpcText();
+	UFUNCTION(BlueprintCallable)
+	int GetCurrentNpcFaceIdx();
 	//Sets up the encounter to the starting conditions, including setting the current line to the first line of dialogue
 	UFUNCTION(BlueprintCallable)
 	void SetEncounterToStart();
@@ -157,6 +159,7 @@ private:
 
 	////"page" is the term we'll use for each fill of the dialogue bubble
 	TArray<FString> currentTextPages;
+	TArray<int> currentFaceOrder;
 	//TArray<int> currentFaceList;
 	int currentPageCount;
 	int currentPageIndex;
@@ -165,7 +168,7 @@ private:
 	//UPROPERTY(BlueprintReadOnly)
 	UEncounterSegment* currentSegment;
 	FString currentLine; /// todo: ououuouhhhh what was that about getters and setters again oops i forgot to go figure out how they work in unreal
-
+	int currentFaceIdx;
 
 	FString endOfSegment = "Reached end of segment";
 

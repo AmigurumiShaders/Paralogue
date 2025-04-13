@@ -54,6 +54,11 @@ FString UParalogueEncounter::GetCurrentNpcText()
 	return currentLine;
 }
 
+int UParalogueEncounter::GetCurrentNpcFaceIdx()
+{
+	return currentFaceIdx;
+}
+
 void UParalogueEncounter::SetEncounterToStart()
 {
 	ReachedEncounterEnd = false;
@@ -74,6 +79,7 @@ void UParalogueEncounter::SetUpNewSegment()
 
 	//currentTextPages.Empty();
 	currentTextPages = currentSegment->NpcLines;
+	currentFaceOrder = currentSegment->NpcFaceSelector;
 	////currentNpcPair = &currentSegment->NpcLinesWithFaces;
 	////ugly for loop because wow i need to not have this be a tpair after all huh
 	//for (int i = 0; i < currentSegment->NpcLinesWithFaces.Num(); i++)
@@ -84,14 +90,15 @@ void UParalogueEncounter::SetUpNewSegment()
 
 	//}
 	currentPageIndex = 0;
-	if (currentPageIndex < currentTextPages.Num()) // making sure array is properly filled before trying to grab current line (had issues with array being empty before, so even index of 0 breaks it)
+	if (currentPageIndex < currentTextPages.Num() && currentPageIndex < currentFaceOrder.Num()) // (had issues with array being empty before, so even index of 0 breaks it)
 	{
 		currentLine = currentTextPages[currentPageIndex];
+		currentFaceIdx = currentFaceOrder[currentPageIndex];
 
 	}
 	else
 	{
-		UE_LOG(ParalogueRuntime, Warning, TEXT("\n Tried to find current line before currentTextPages was properly set (array appears to be empty)"))
+		UE_LOG(ParalogueRuntime, Warning, TEXT("\n Tried to find current line before currentTextPages and currentFaceOrder were properly set (arrays appear to be empty)"))
 	}
 
 	// set player response options
@@ -106,6 +113,7 @@ void UParalogueEncounter::PageForward()
 	if (currentPageIndex < currentTextPages.Num())
 	{
 		currentLine = currentTextPages[currentPageIndex];
+		currentFaceIdx = currentFaceOrder[currentPageIndex];
 	}
 	else
 	{
