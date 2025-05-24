@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "ParalogueGameInstanceSubsystem.h"
 
 #include "Containers/Map.h"
 
@@ -82,7 +83,7 @@ public:
 };
 
 	//class UParalogueEncounterEdGraphData; //forward delcaration, because we need to be able to use UEncounterSegment in UNodeEncounterSegmentData, but without creating a circular dependency
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, Blueprintable)
 class PARALOGUE_API UParalogueEncounter : public UObject
 {
 	GENERATED_BODY()
@@ -90,6 +91,12 @@ class PARALOGUE_API UParalogueEncounter : public UObject
 public:
 
 	UParalogueEncounter();
+
+	/*UPROPERTY(EditAnywhere)
+	UParalogueEncounter* TestChildHolder;*/
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void TestEncounterEvent();
 
 	//all this because apparently the other way doesnt work with connectins...
 	//void SetPreSaveListener(std::function<void()> onPreSaveListener) { _onPreSaveListener = onPreSaveListener; }
@@ -131,7 +138,9 @@ public:
 	int GetCurrentNpcFaceIdx();
 	//Sets up the encounter to the starting conditions, including setting the current line to the first line of dialogue
 	UFUNCTION(BlueprintCallable)
-	void SetEncounterToStart();
+	void SetEncounterToStart(AActor* owningActor); //need world context bc thats what GetGameInstance needs, and passing from BPs is the least gross and least time-consuming way I can think of
+	UFUNCTION(BlueprintCallable)
+	TArray<int> GetPlayerResponseLog() { return playerResponseLog; }
 
 	//Options within the current encounter that the player has to respond to the npc
 	UPROPERTY(BlueprintReadOnly, Transient)
@@ -164,6 +173,7 @@ private:
 	int currentPageCount;
 	int currentPageIndex;
 
+	UWorld* worldContextObj;
 
 	//UPROPERTY(BlueprintReadOnly)
 	UEncounterSegment* currentSegment;
@@ -171,6 +181,6 @@ private:
 	int currentFaceIdx;
 
 	FString endOfSegment = "Reached end of segment";
-
+	TArray<int> playerResponseLog;
 
 };

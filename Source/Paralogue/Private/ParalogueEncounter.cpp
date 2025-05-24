@@ -12,6 +12,8 @@ UParalogueEncounter::UParalogueEncounter()
 {
 	//InitSegment(0);
 
+	//TestChildHolder = NewObject<TSubclassOf<UParalogueEncounter>>(this);
+
 }
 
 //void UParalogueEncounter::PreSave(FObjectPreSaveContext saveContext)
@@ -59,8 +61,15 @@ int UParalogueEncounter::GetCurrentNpcFaceIdx()
 	return currentFaceIdx;
 }
 
-void UParalogueEncounter::SetEncounterToStart()
+void UParalogueEncounter::SetEncounterToStart(AActor* owningActor)
 {
+	worldContextObj = owningActor->GetWorld(); //GetWorld does not appear to be blueprint callable, so we are taking the actor reference and calling it here in c++
+	//todo: actually, the encounters should probably get an actual owner to begin with. I'm sure it would be more proper.
+	// it would also make far more sense to the user to not have to pass in a random actor pointer 
+	// into the first bp callable function I thought would work. However this is already working
+	// and idk how to give it an owner off the top of my head. The entirety of my UE experience says just 
+	// looking up how to do that would either be quicker than typing all this, or it would be a 3 day saga 
+	// frought with the consequences of my actions. This is my line in the sand dude, so onto the polish pile this goes. (this was not the polish mountain comeback i expected)
 	ReachedEncounterEnd = false;
 	DisplayedPlayerOptions.Empty(); //just making sure its clear (can probably remove if transient specifier is working how i think it is
 	//SetUpNewSegment(0);
@@ -134,6 +143,13 @@ void UParalogueEncounter::PageForward()
 		else
 		{
 			ReachedEncounterEnd = true;
+			//TestEncounterEvent();
+			//It's important that we save player response log to persistent instance here in c++ rather than leave it up to the user to remember to do this.
+			//We want a *complete* log of all responses the player has ever input during the game, doing it for them dramatically simplifies their work. In theory anyway. Point and laugh at me if this turns out to be useless. 
+			
+			UGameplayStatics::GetGameInstance(worldContextObj)->
+				GetSubsystem<UParalogueGameInstanceSubsystem>()->
+				AddEncounterResponseData(this->GetFName(), playerResponseLog);
 		}
 		//currentLine = endOfSegment;
 	}
@@ -152,6 +168,8 @@ void UParalogueEncounter::ProcessPlayerResponse(int playerSelectedIdx)
 
 	}*/
 	//if(currentSegment->PlayerOptionToNextSegment[playerSelectedIdx].Value)
+
+	playerResponseLog.Add(playerSelectedIdx);
 	AwaitingPlayerResponse = false;
 	currentSegment = currentSegment->NextSegmentSelector[playerSelectedIdx];
 	//currentSegment = currentSegment->PlayerOptionToNextSegment[playerSelectedIdx].Value;

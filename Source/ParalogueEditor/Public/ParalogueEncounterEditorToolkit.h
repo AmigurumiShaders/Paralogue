@@ -48,6 +48,9 @@ public:
 	//float GetStandardDeviation() const;
 	//void SetMean(float Mean);
 	//void SetStandardDeviation(float StandardDeviation);
+
+
+
 private:
 	UParalogueEncounter* workingEncounterAsset;
 
