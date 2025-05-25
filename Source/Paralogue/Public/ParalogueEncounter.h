@@ -62,6 +62,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<UEncounterSegment*> NextSegmentSelector;
 
+	UPROPERTY(EditAnywhere, Category = "Route Flags")
+	FName FlagToSet;
+	UPROPERTY(EditAnywhere, Category = "Route Flags")
+	bool FlagValue;
+
 	//UPROPERTY(EditAnywhere, Category = "Testing")
 	//int PlayerResponseIndex; //for testing the logic of selecting the right npc response based on the player's selection (NOT planning to use this during runtime)
 

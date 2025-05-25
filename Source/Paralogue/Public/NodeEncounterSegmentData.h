@@ -26,5 +26,8 @@ public:
 		TArray<FText> PlayerResponseOptions;
 
 	
-
+	UPROPERTY(EditAnywhere, Category = "Route Flags")
+	FName FlagToSet;
+	UPROPERTY(EditAnywhere, Category = "Route Flags")
+	bool FlagValue;
 };

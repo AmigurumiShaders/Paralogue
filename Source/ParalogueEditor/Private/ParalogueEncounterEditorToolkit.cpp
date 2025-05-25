@@ -487,6 +487,9 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 		ParseSegmentText(node->GetNodeInfo()->CharacterLines, &thisEncounterSegment->NpcLines, &thisEncounterSegment->NpcFaceSelector);
 	}
 
+	thisEncounterSegment->FlagToSet = node->GetNodeInfo()->FlagToSet;
+	thisEncounterSegment->FlagValue = node->GetNodeInfo()->FlagValue;
+
 	for (int j = 0; j < pinCount; j++) //loop through each pin on the node
 	{
 		UEdGraphPin* thisPin = node->Pins[j];

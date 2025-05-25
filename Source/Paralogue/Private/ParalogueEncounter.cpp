@@ -86,6 +86,10 @@ void UParalogueEncounter::SetUpNewSegment()
 		return;
 	}
 
+	UGameplayStatics::GetGameInstance(worldContextObj)->
+		GetSubsystem<UParalogueGameInstanceSubsystem>()->
+		SetRouteFlag(currentSegment->FlagToSet, currentSegment->FlagValue);
+
 	//currentTextPages.Empty();
 	currentTextPages = currentSegment->NpcLines;
 	currentFaceOrder = currentSegment->NpcFaceSelector;
