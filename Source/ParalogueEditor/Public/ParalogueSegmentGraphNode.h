@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
-#include "ParalogueGraphNodeBase.h"
 
 #include "ParalogueEncounter.h"
 

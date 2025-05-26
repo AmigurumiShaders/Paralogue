@@ -15,14 +15,6 @@
 /**
  * 
  */
-
-UENUM()
-enum class EParalogueNodeType {
-	StartNode,
-	SegmentNode,
-	EventNode
-};
-
 UCLASS()
 class PARALOGUE_API UParalogueEncounterEdPinData : public UObject
 {
@@ -44,9 +36,6 @@ class PARALOGUE_API UParalogueEncounterEdNodeData : public UObject
 	GENERATED_BODY() 
 	
 public:
-	UPROPERTY()
-	EParalogueNodeType NodeType = EParalogueNodeType::SegmentNode;
-
 
 	UPROPERTY()//this is not the *connection* to the input pin, it is literally ONLY the pin itself on the node (which then holds the connections)
 	UParalogueEncounterEdPinData* InputPin;
