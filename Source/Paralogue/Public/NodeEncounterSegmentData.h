@@ -5,20 +5,29 @@
 
 #include "NodeEncounterSegmentData.generated.h"
 
-UCLASS() //maybe make BlueprintType?
 /// <summary>
-/// Per-node data edited by user creating the dialogue, such as the NPC text and the player responses. (and not the graph data like position and connections)
+/// Base class for storing the data that the user enters into each node
 /// </summary>
-class PARALOGUE_API UNodeEncounterSegmentData : public UObject {
+UCLASS()
+class PARALOGUE_API UPlogRtNodeUserData : public UObject {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, Category = "Meta")
 	FText Title;
-	/*Detailed description of this segment, such as for the situation it is intended for. Like a code comment*/
+	/*Detailed description of this node, such as for the narrative situation it is intended for. Like a code comment*/
 	UPROPERTY(EditAnywhere, Category = "Meta")
 	FText Description; //maybe call this writer comment or something later but not worth overthinking now
 	//todo: it appears unreal maybe has some sort of "info" type, which might be a good thing to change this to
 
+};
+
+UCLASS() //maybe make BlueprintType?
+/// <summary>
+/// (pending rename when we feel likePer-node data edited by user creating the dialogue, such as the NPC text and the player responses. (and not the graph data like position and connections)
+/// </summary>
+class PARALOGUE_API UNodeEncounterSegmentData : public UPlogRtNodeUserData {
+	GENERATED_BODY()
+public:
 	/*Linear segment of dialogue from the character, as one delimited string of text*/
 	UPROPERTY(EditAnywhere,meta = (MultiLine = true) )//meta=(MultiLine=true) add this?
 		FText CharacterLines;
