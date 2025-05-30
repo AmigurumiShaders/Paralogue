@@ -6,6 +6,7 @@
 #include "EdGraph/EdGraphNode.h"
 
 #include "ParalogueEncounter.h"
+#include "PlogEdEncounterGraphNode.h"
 
 #include "ParalogueSegmentGraphNode.generated.h"
 
@@ -14,7 +15,7 @@
  * 
  */
 UCLASS()
-class PARALOGUEEDITOR_API UParalogueSegmentGraphNode : public UEdGraphNode
+class PARALOGUEEDITOR_API UParalogueSegmentGraphNode : public UPlogEdEncounterGraphNode
 {
 	GENERATED_BODY()
 	
@@ -30,8 +31,8 @@ public:
 
 	UEdGraphPin* CreateCustomPin(EEdGraphPinDirection direction, FName name);
 	void SyncPinsWithResponses();
-	void SetNodeInfo(class UNodeEncounterSegmentData* data) { segmentNodeData = data; }
-	class UNodeEncounterSegmentData* GetNodeInfo() { return segmentNodeData; }
+	void SetNodeInfo(class UPlogRtNodeUserData* data) { segmentNodeData = data; }
+	class UPlogRtNodeUserData* GetNodeInfo() { return segmentNodeData; }
 
 	UEncounterSegment* GetSegmentTempData() { return processedTempData; }
 	void SetSegmentTempData(UEncounterSegment* input) { processedTempData = input; }
@@ -46,7 +47,7 @@ private:
 	FExecuteAction deletePinLambda;
 	FExecuteAction deleteNodeLambda;
 
-	class UNodeEncounterSegmentData* segmentNodeData;
+	class UPlogRtNodeUserData* segmentNodeData;
 	//temporarily holds the processed encounter segment, making it easier to hook up with multiple inputs to this node
 	UEncounterSegment* processedTempData = nullptr; // I still am unaware if there is a better way of avoiding duplicates. Going with this simply appears to be the most effective use of my time with my current knowledge.
 	

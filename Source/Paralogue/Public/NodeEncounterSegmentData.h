@@ -23,15 +23,15 @@ public:
 
 UCLASS() //maybe make BlueprintType?
 /// <summary>
-/// (pending rename when we feel likePer-node data edited by user creating the dialogue, such as the NPC text and the player responses. (and not the graph data like position and connections)
+/// Data for the main encounter segments
 /// </summary>
-class PARALOGUE_API UNodeEncounterSegmentData : public UPlogRtNodeUserData {
+class PARALOGUE_API UPlogRtEncounterSegmentNodeUserData : public UPlogRtNodeUserData {
 	GENERATED_BODY()
 public:
 	/*Linear segment of dialogue from the character, as one delimited string of text*/
-	UPROPERTY(EditAnywhere,meta = (MultiLine = true) )//meta=(MultiLine=true) add this?
+	UPROPERTY(EditAnywhere,meta = (MultiLine = true), Category = "Dialogue Content")//meta=(MultiLine=true) add this?
 		FText CharacterLines;
-	UPROPERTY(EditAnywhere) //meta=(MultiLine=true) add this?
+	UPROPERTY(EditAnywhere, Category = "Dialogue Content") //meta=(MultiLine=true) add this?
 		TArray<FText> PlayerResponseOptions;
 
 	

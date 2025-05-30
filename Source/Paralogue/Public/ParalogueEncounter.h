@@ -37,8 +37,9 @@ DECLARE_LOG_CATEGORY_EXTERN(ParalogueRuntime, Log, All);
 /// </summary>
 UCLASS()
 class PARALOGUE_API UEncounterSegment : public UObject
-{
+{ 
 	GENERATED_BODY()
+	//could consider initializers called things like "init as branch" or something to simplify the code for building the encounters on editor side
 	UEncounterSegment()
 	{
 		NpcLines.Add(FString("[ctor placeholder]"));
@@ -120,10 +121,10 @@ public:
 
 
 	//void ClearEncounter(); //clears the segments, might be useful for saving the asset...
-	void SetGraphData(UParalogueEncounterEdGraphData* data) { graphData = data; }
-	UParalogueEncounterEdGraphData* GetGraphData() { return graphData; }
+	void SetGraphData(UPlogRtEditorSavedGraphData* data) { graphData = data; }
+	UPlogRtEditorSavedGraphData* GetGraphData() { return graphData; }
 	UPROPERTY(BlueprintReadOnly)
-	UParalogueEncounterEdGraphData* graphData = nullptr;
+	UPlogRtEditorSavedGraphData* graphData = nullptr;
 	
 	// =============================
 	// === User/blueprint-facing ===

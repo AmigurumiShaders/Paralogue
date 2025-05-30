@@ -107,7 +107,7 @@ void UParalogueSegmentGraphNode::SyncPinsWithResponses()
 	// Sync the pins on the node with the dialog responses
 	// We're going to assume the first pin is always the
 	// input pin
-	UNodeEncounterSegmentData* nodeData = GetNodeInfo();
+	UPlogRtEncounterSegmentNodeUserData* nodeData = GetNodeInfo();
 	int numGraphNodePins = Pins.Num() - 1;
 	int numInfoPins = nodeData->PlayerResponseOptions.Num();
 

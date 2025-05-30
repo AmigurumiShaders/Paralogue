@@ -245,7 +245,7 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 		return;
 	}
 
-	UParalogueEncounterEdGraphData* graphDataToSave = NewObject<UParalogueEncounterEdGraphData>(workingEncounterAsset);
+	UPlogRtEditorSavedGraphData* graphDataToSave = NewObject<UPlogRtEditorSavedGraphData>(workingEncounterAsset);
 	//workingEncounterAsset->SetGraphData(graphDataToSave);
 	workingEncounterAsset->graphData = graphDataToSave;
 
@@ -258,7 +258,7 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 	//loop through all of the nodes of the graph to create save-able runtime versions
 
 	TArray<TPair<FGuid, FGuid>> connections;
-	TMap<FGuid, UParalogueEncounterEdPinData*> guidToPinMap; //map between guid and the place the data is Going
+	TMap<FGuid, UPlogRtEditorSavedPinData*> guidToPinMap; //map between guid and the place the data is Going
 
 	// for each node in the UI dialogue graph
 	for (UEdGraphNode* uiNode : uiDialogueGraph->Nodes)
@@ -269,15 +269,15 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 			continue;
 		}
 
-		UParalogueEncounterEdNodeData* assetNodeData = NewObject<UParalogueEncounterEdNodeData>(graphDataToSave);
+		UPlogRtEditorSavedNodeData* assetNodeData = NewObject<UPlogRtEditorSavedNodeData>(graphDataToSave);
 		assetNodeData->Position = FVector2D(uiNode->NodePosX, uiNode->NodePosY);
 
-		assetNodeData->NodeSegmentData = uiGraphNode->GetNodeInfo();
+		assetNodeData->NodeUserData = uiGraphNode->GetNodeInfo();
 
 		//for each pin in the node, save its data and get any connections it has
 		for (UEdGraphPin* uiPin : uiNode->Pins)
 		{
-			UParalogueEncounterEdPinData* assetPinData = NewObject<UParalogueEncounterEdPinData>(assetNodeData);
+			UPlogRtEditorSavedPinData* assetPinData = NewObject<UPlogRtEditorSavedPinData>(assetNodeData);
 			assetPinData->PinName = uiPin->PinName;
 			assetPinData->PinId = uiPin->PinId;
 			//i had a thought about combining into a single if/else instead of 2 if's but one thing at a time and thats at best a marginal improvement anyway
@@ -311,8 +311,8 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 	for (TPair<FGuid, FGuid> connection : connections)
 	{
 		//use the map to grab the pin by its guid (unfortunately tpair calls them key/value, which is sort of making it weird when using both as map keys...)
-		UParalogueEncounterEdPinData* pin1 = guidToPinMap[connection.Key];
-		UParalogueEncounterEdPinData* pin2 = guidToPinMap[connection.Value];
+		UPlogRtEditorSavedPinData* pin1 = guidToPinMap[connection.Key];
+		UPlogRtEditorSavedPinData* pin2 = guidToPinMap[connection.Value];
 		pin1->Connections.Add(pin2);
 	}
 
@@ -338,31 +338,31 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 	
 
 	//for each node saved in the asset graph
-	for (UParalogueEncounterEdNodeData* assetNode : workingEncounterAsset->GetGraphData()->Nodes)
+	for (UPlogRtEditorSavedNodeData* savedAssetNode : workingEncounterAsset->GetGraphData()->Nodes)
 	{
 		UParalogueSegmentGraphNode* newUiNode = NewObject<UParalogueSegmentGraphNode>(uiDialogueGraph);
 		newUiNode->CreateNewGuid(); //this is not saved because there isnt really a reason to (for now), so just make a new one
-		newUiNode->NodePosX = assetNode->Position.X;
-		newUiNode->NodePosY = assetNode->Position.Y;
+		newUiNode->NodePosX = savedAssetNode->Position.X;
+		newUiNode->NodePosY = savedAssetNode->Position.Y;
 
-		if (assetNode->NodeSegmentData != nullptr) 
+		if (savedAssetNode->NodeUserData != nullptr)
 		{
-			newUiNode->SetNodeInfo(DuplicateObject(assetNode->NodeSegmentData, assetNode)); //The object is parented to the node, and will go away when the node goes away. Need to duplicate 
+			newUiNode->SetNodeInfo(DuplicateObject(savedAssetNode->NodeUserData, savedAssetNode)); //The object is parented to the node, and will go away when the node goes away. Need to duplicate 
 		}
 		else
 		{
-			newUiNode->SetNodeInfo(NewObject<UNodeEncounterSegmentData>(assetNode));
+			newUiNode->SetNodeInfo(NewObject<UPlogRtEncounterSegmentNodeUserData>(savedAssetNode));
 		}
 
 		//for each pin in the SAVED node, create a pin in the UI node
 		UEdGraphPin* newUiPin = nullptr;
 
 		//---input pin section (input and output pins are saved separately, and we know there is only one input pin per node, no need to loop)
-		UParalogueEncounterEdPinData* assetInputPin = assetNode->InputPin;
+		UPlogRtEditorSavedPinData* assetInputPin = savedAssetNode->InputPin;
 		if (assetInputPin != nullptr) {
 			newUiPin = newUiNode->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, assetInputPin->PinName);
 			newUiPin->PinId = assetInputPin->PinId;
-			for (UParalogueEncounterEdPinData* linkedPin : assetInputPin->Connections) //user is allowed to have multiple connections per pin, need to save all of them
+			for (UPlogRtEditorSavedPinData* linkedPin : assetInputPin->Connections) //user is allowed to have multiple connections per pin, need to save all of them
 			{
 				TPair<FGuid, FGuid> connection = TPairInitializer(assetInputPin->PinId, linkedPin->PinId);
 				connections.Add(connection);
@@ -374,12 +374,12 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 
 
 		//---output pins section
-		for (UParalogueEncounterEdPinData* assetOutputPin : assetNode->OutputPins)
+		for (UPlogRtEditorSavedPinData* assetOutputPin : savedAssetNode->OutputPins)
 		{
 			newUiPin = newUiNode->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, assetOutputPin->PinName);
 			newUiPin->PinId = assetOutputPin->PinId;
 
-			for (UParalogueEncounterEdPinData* linkedPin : assetOutputPin->Connections) //user is allowed to have multiple connections per pin, need to save all of them
+			for (UPlogRtEditorSavedPinData* linkedPin : assetOutputPin->Connections) //user is allowed to have multiple connections per pin, need to save all of them
 			{
 				TPair<FGuid, FGuid> connection = TPairInitializer(assetOutputPin->PinId, linkedPin->PinId);
 				connections.Add(connection);
@@ -459,7 +459,13 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 	}
 	//===================================
 	
-
+	UPlogRtEncounterSegmentNodeUserData* segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(node->GetNodeInfo());
+	if (segmentNodeUserData == nullptr)
+	{
+		UE_LOG(ParalogueEditor, Warning, TEXT("Failed attempt to cast node user data as segment node user data"));
+		return nullptr;
+	}
+	//===================================
 
 	//init blank segment for the node, make sure to set the Encounter asset as the outer so that the segments aren't wiped away when the editor closes
 	thisEncounterSegment = NewObject<UEncounterSegment>(workingEncounterAsset);
@@ -474,7 +480,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 	//clear the array first
 	thisEncounterSegment->NpcLines.Empty();
 	thisEncounterSegment->NpcFaceSelector.Empty();
-	if (node->GetNodeInfo()->CharacterLines.IsEmpty())
+	if (segmentNodeUserData->CharacterLines.IsEmpty())
 	{
 		//if there is no text to add, add placeholder text instead of leaving blank (prevents anything from breaking from trying to run an empty segment, and also tells the user rather than having this just silently fail)
 		//thisEncounterSegment->NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
@@ -484,11 +490,11 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 	else
 	{
 		// parse the text (and face) info for the segment into the version that will actually be used when the game is runnning, including actually placing it into that object
-		ParseSegmentText(node->GetNodeInfo()->CharacterLines, &thisEncounterSegment->NpcLines, &thisEncounterSegment->NpcFaceSelector);
+		ParseSegmentText(segmentNodeUserData->CharacterLines, &thisEncounterSegment->NpcLines, &thisEncounterSegment->NpcFaceSelector);
 	}
 
-	thisEncounterSegment->FlagToSet = node->GetNodeInfo()->FlagToSet;
-	thisEncounterSegment->FlagValue = node->GetNodeInfo()->FlagValue;
+	thisEncounterSegment->FlagToSet = segmentNodeUserData->FlagToSet;
+	thisEncounterSegment->FlagValue = segmentNodeUserData->FlagValue;
 
 	for (int j = 0; j < pinCount; j++) //loop through each pin on the node
 	{
@@ -513,17 +519,17 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 					//create the segment for the connected node (this is where the recursion comes in)
 					UEncounterSegment* npcResponse = CreateOrFindSegmentForGraphNode(npcResponseNode);
 
-					if (node->GetNodeInfo()->PlayerResponseOptions.IsEmpty())
+					if (segmentNodeUserData->PlayerResponseOptions.IsEmpty())
 					{
 						UE_LOG(ParalogueEditor, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLines[0]);
 					}
 
 					//THEN, add that segment to the responses for this segment
 					//thisEncounterSegment->PlayerOptionToNextSegment[thisOutPinIndex] = TPair<FText, UEncounterSegment*>(FText(), npcResponse);
-					if (node->GetNodeInfo()->PlayerResponseOptions.IsValidIndex(thisOutPinIndex))
+					if (segmentNodeUserData->PlayerResponseOptions.IsValidIndex(thisOutPinIndex))
 					{
 						//thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>(node->GetNodeInfo()->PlayerResponseOptions[thisOutPinIndex], npcResponse));
-						thisEncounterSegment->PlayerOptions.Add(FText(node->GetNodeInfo()->PlayerResponseOptions[thisOutPinIndex]));
+						thisEncounterSegment->PlayerOptions.Add(FText(segmentNodeUserData->PlayerResponseOptions[thisOutPinIndex]));
 						thisEncounterSegment->NextSegmentSelector.Add(npcResponse);
 					}
 					else

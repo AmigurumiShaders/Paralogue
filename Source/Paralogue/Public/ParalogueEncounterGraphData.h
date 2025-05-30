@@ -16,7 +16,7 @@
  * 
  */
 UCLASS()
-class PARALOGUE_API UParalogueEncounterEdPinData : public UObject
+class PARALOGUE_API UPlogRtEditorSavedPinData : public UObject
 {
 	GENERATED_BODY()
 public:
@@ -26,36 +26,55 @@ public:
 	UPROPERTY()
 	FGuid PinId;
 	UPROPERTY() //Array of the connections to this pin. Since we know we want to allow multiple connections to at least the input pins
-	TArray<UParalogueEncounterEdPinData*>  Connections;
+	TArray<UPlogRtEditorSavedPinData*>  Connections;
 
 };
-
 UCLASS()
-class PARALOGUE_API UParalogueEncounterEdNodeData : public UObject
+class PARALOGUE_API UPlogRtEditorSavedNodeData : public UObject
 {
-	GENERATED_BODY() 
-	
-public:
+	GENERATED_BODY()
 
+public:
 	UPROPERTY()//this is not the *connection* to the input pin, it is literally ONLY the pin itself on the node (which then holds the connections)
-	UParalogueEncounterEdPinData* InputPin;
+		UPlogRtEditorSavedPinData* InputPin;
 	UPROPERTY()
-	TArray<UParalogueEncounterEdPinData*> OutputPins;
+	TArray<UPlogRtEditorSavedPinData*> OutputPins;
 	UPROPERTY()
 	FVector2D Position;
 
 	UPROPERTY()
-	UNodeEncounterSegmentData* NodeSegmentData = nullptr;
-	
+	UPlogRtNodeUserData* NodeUserData = nullptr;
 };
 
+///// <summary>
+///// deprecated
+///// </summary>
+//UCLASS()
+//class PARALOGUE_API UPlogRtEditorSavedNodeData : public UObject
+//{
+//	GENERATED_BODY() 
+//	
+//public:
+//
+//	UPROPERTY()//this is not the *connection* to the input pin, it is literally ONLY the pin itself on the node (which then holds the connections)
+//	UParalogueEncounterEdPinData* InputPin;
+//	UPROPERTY()
+//	TArray<UParalogueEncounterEdPinData*> OutputPins;
+//	UPROPERTY()
+//	FVector2D Position;
+//
+//	UPROPERTY()
+//	UNodeEncounterSegmentData* NodeSegmentData = nullptr;
+//	
+//};
+
 UCLASS()
-class PARALOGUE_API UParalogueEncounterEdGraphData : public UObject
+class PARALOGUE_API UPlogRtEditorSavedGraphData : public UObject
 {
 	GENERATED_BODY()
 public:
 
 	UPROPERTY()
-	TArray<UParalogueEncounterEdNodeData*> Nodes;
+	TArray<UPlogRtEditorSavedNodeData*> Nodes;
 
 };
