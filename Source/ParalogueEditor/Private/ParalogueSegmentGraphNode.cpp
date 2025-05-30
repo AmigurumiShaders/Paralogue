@@ -6,7 +6,9 @@
 #include "ToolMenu.h"
 #include "NodeEncounterSegmentData.h"
 
-UParalogueSegmentGraphNode::UParalogueSegmentGraphNode()
+DEFINE_LOG_CATEGORY(ParalogueEditorNodes);
+
+UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
 {
 	graph = this->GetGraph();
 
@@ -22,7 +24,7 @@ UParalogueSegmentGraphNode::UParalogueSegmentGraphNode()
 				EEdGraphPinDirection::EGPD_Output,
 				*pinName
 			);*/
-			this->GetNodeInfo()->PlayerResponseOptions.Add(FText::FromString(pinName));
+			this->GetNodeUserData()->PlayerResponseOptions.Add(FText::FromString(pinName));
 			this->SyncPinsWithResponses();
 
 			graph->NotifyGraphChanged();
@@ -56,7 +58,7 @@ UParalogueSegmentGraphNode::UParalogueSegmentGraphNode()
 }
 
 
-void UParalogueSegmentGraphNode::GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const
+void UPlogEdSegmentGraphNode::GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const
 {
 	//probably make this class var instead? actually i dont think i can since it requires menu variable
 	FToolMenuSection& section = menu->AddSection(TEXT("tell the dev to give me a better name lol"), FText::FromString(TEXT("Segment Node Actions")));
@@ -87,7 +89,7 @@ void UParalogueSegmentGraphNode::GetNodeContextMenuActions(UToolMenu* menu, UGra
 
 }
 
-UEdGraphPin* UParalogueSegmentGraphNode::CreateCustomPin(EEdGraphPinDirection direction, FName name)
+UEdGraphPin* UPlogEdSegmentGraphNode::CreateCustomPin(EEdGraphPinDirection direction, FName name)
 {
 	FName category = (direction == EEdGraphPinDirection::EGPD_Input) ? TEXT("Inputs") : TEXT("Outputs");
 	FName subcategory = TEXT("tell the dev to give me a better name lol"); //probably dont call it custom pin
@@ -102,12 +104,12 @@ UEdGraphPin* UParalogueSegmentGraphNode::CreateCustomPin(EEdGraphPinDirection di
 	return pin;
 }
 
-void UParalogueSegmentGraphNode::SyncPinsWithResponses()
+void UPlogEdSegmentGraphNode::SyncPinsWithResponses()
 {
 	// Sync the pins on the node with the dialog responses
 	// We're going to assume the first pin is always the
 	// input pin
-	UPlogRtEncounterSegmentNodeUserData* nodeData = GetNodeInfo();
+	UPlogRtEncounterSegmentNodeUserData* nodeData = GetNodeUserData();
 	int numGraphNodePins = Pins.Num() - 1;
 	int numInfoPins = nodeData->PlayerResponseOptions.Num();
 
@@ -128,5 +130,20 @@ void UParalogueSegmentGraphNode::SyncPinsWithResponses()
 	for (const FText& option : nodeData->PlayerResponseOptions) {
 		GetPinAt(index)->PinName = FName(option.ToString());
 		index++;
+	}
+}
+
+void UPlogEdSegmentGraphNode::SetNodeUserData(UPlogRtNodeUserData* data)
+{
+	segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(data);
+	if (data == nullptr)
+	{
+		UE_LOG(ParalogueEditorNodes, Warning, TEXT("Tried to set node user data with null object"))
+
+	}
+	else if (segmentNodeUserData == nullptr)
+	{
+		UE_LOG(ParalogueEditorNodes, Warning, TEXT("Failed cast of node user data object to segment node user data"))
+
 	}
 }

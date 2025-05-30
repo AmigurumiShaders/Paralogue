@@ -53,13 +53,13 @@ const FPinConnectionResponse UParalogueGraphSchema::CanCreateConnection(const UE
 
 UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* fromPin, const FVector2D location, bool bSelectNewNode)
 {
-	UParalogueSegmentGraphNode* newSegmentNode = NewObject<UParalogueSegmentGraphNode>(parentGraph); //after making paraseg node, change to that type
+	UPlogEdSegmentGraphNode* newSegmentNode = NewObject<UPlogEdSegmentGraphNode>(parentGraph); //after making paraseg node, change to that type
 	newSegmentNode->CreateNewGuid(); //necessary for linking things together 
 	//perhaps when creating a new segment node, a new segment should be added to the encounter asset. store it in the array and then make sure that the nodes at least know which array index they are (?)
 	newSegmentNode->NodePosX = location.X;
 	newSegmentNode->NodePosY = location.Y;
 
-	newSegmentNode->SetNodeInfo(NewObject<UPlogRtEncounterSegmentNodeUserData>(newSegmentNode));//setting outer object (info on outer: https://forums.unrealengine.com/t/what-is-meant-by-outer-object/40985)
+	newSegmentNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(newSegmentNode));//setting outer object (info on outer: https://forums.unrealengine.com/t/what-is-meant-by-outer-object/40985)
 
 
 	// i want to find a better name for the input node...

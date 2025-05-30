@@ -42,7 +42,7 @@ public:
 	void OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection);
 	void SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView); //this is weird to have as private but may still be necessary for that delegate function?
 
-	UParalogueSegmentGraphNode* GetSelectedNode (const FGraphPanelSelectionSet& selection);
+	UPlogEdSegmentGraphNode* GetSelectedNode (const FGraphPanelSelectionSet& selection);
 	
 	//float GetMean() const;
 	//float GetStandardDeviation() const;
@@ -75,7 +75,7 @@ private:
 	/// </summary>
 	void BuildIngameEncounterFromGraph();
 	//Recursive function for saving each child segment in the dialogue tree
-	UEncounterSegment* CreateOrFindSegmentForGraphNode(UParalogueSegmentGraphNode* node); //maybe some index or something idk
+	UEncounterSegment* CreateOrFindSegmentForGraphNode(UPlogEdSegmentGraphNode* node); //maybe some index or something idk
 	
 	/// <summary>
 	/// [[[DEPRECATED: not using tpair array anymore]]] parse delimited string of NPC dialogue and face information into the version used by the gameplay-time UEncounterSegment

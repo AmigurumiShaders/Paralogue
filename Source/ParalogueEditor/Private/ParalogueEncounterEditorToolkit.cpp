@@ -179,7 +179,7 @@ void ParalogueEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated(const F
 	if (workingGraphSlateDisplay != nullptr) 
 	{
 		//get the node being modified
-		UParalogueSegmentGraphNode* segNode = GetSelectedNode(workingGraphSlateDisplay->GetSelectedNodes());
+		UPlogEdSegmentGraphNode* segNode = GetSelectedNode(workingGraphSlateDisplay->GetSelectedNodes());
 		if (segNode != nullptr)
 		{
 			segNode->SyncPinsWithResponses();
@@ -205,13 +205,13 @@ void ParalogueEncounterEditorToolkit::SetSelectedNodeDetailView(TSharedPtr<class
 	selectedNodeDetailsView->OnFinishedChangingProperties().AddRaw(this, &ParalogueEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated);
 }
 
-UParalogueSegmentGraphNode* ParalogueEncounterEditorToolkit::GetSelectedNode(const FGraphPanelSelectionSet& selection)
+UPlogEdSegmentGraphNode* ParalogueEncounterEditorToolkit::GetSelectedNode(const FGraphPanelSelectionSet& selection)
 {
 	//todo: theoretically according to Kirby video, you can (probably) set multiple objects and it will let you edit the common set of properties
 // selection is a group of UObjects, find the first ParalogueSegmentGraphNode if any
 	for (UObject* obj : selection)
 	{
-		UParalogueSegmentGraphNode* node = Cast<UParalogueSegmentGraphNode>(obj);
+		UPlogEdSegmentGraphNode* node = Cast<UPlogEdSegmentGraphNode>(obj);
 		if (node != nullptr)
 		{
 			return node;
@@ -225,10 +225,10 @@ void ParalogueEncounterEditorToolkit::OnGraphSelectionChanged(const FGraphPanelS
 {
 	//todo: theoretically according to Kirby video, you can (probably) set multiple objects and it will let you edit the common set of properties
 	// selection is a group of UObjects, find the first ParalogueSegmentGraphNode if any
-	UParalogueSegmentGraphNode* selectedNode = GetSelectedNode(selection);
+	UPlogEdSegmentGraphNode* selectedNode = GetSelectedNode(selection);
 	if (selectedNode != nullptr) 
 	{
-		selectedNodeDetailsView->SetObject(selectedNode->GetNodeInfo());
+		selectedNodeDetailsView->SetObject(selectedNode->GetNodeUserData());
 	}
 	else 
 	{
@@ -263,7 +263,7 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 	// for each node in the UI dialogue graph
 	for (UEdGraphNode* uiNode : uiDialogueGraph->Nodes)
 	{
-		UParalogueSegmentGraphNode* uiGraphNode = Cast<UParalogueSegmentGraphNode>(uiNode);
+		UPlogEdSegmentGraphNode* uiGraphNode = Cast<UPlogEdSegmentGraphNode>(uiNode);
 		if (uiGraphNode == nullptr) 
 		{
 			continue;
@@ -272,7 +272,7 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 		UPlogRtEditorSavedNodeData* assetNodeData = NewObject<UPlogRtEditorSavedNodeData>(graphDataToSave);
 		assetNodeData->Position = FVector2D(uiNode->NodePosX, uiNode->NodePosY);
 
-		assetNodeData->NodeUserData = uiGraphNode->GetNodeInfo();
+		assetNodeData->NodeUserData = uiGraphNode->GetNodeUserData();
 
 		//for each pin in the node, save its data and get any connections it has
 		for (UEdGraphPin* uiPin : uiNode->Pins)
@@ -340,18 +340,19 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 	//for each node saved in the asset graph
 	for (UPlogRtEditorSavedNodeData* savedAssetNode : workingEncounterAsset->GetGraphData()->Nodes)
 	{
-		UParalogueSegmentGraphNode* newUiNode = NewObject<UParalogueSegmentGraphNode>(uiDialogueGraph);
+		UPlogEdSegmentGraphNode* newUiNode = NewObject<UPlogEdSegmentGraphNode>(uiDialogueGraph);
 		newUiNode->CreateNewGuid(); //this is not saved because there isnt really a reason to (for now), so just make a new one
 		newUiNode->NodePosX = savedAssetNode->Position.X;
 		newUiNode->NodePosY = savedAssetNode->Position.Y;
 
+
 		if (savedAssetNode->NodeUserData != nullptr)
 		{
-			newUiNode->SetNodeInfo(DuplicateObject(savedAssetNode->NodeUserData, savedAssetNode)); //The object is parented to the node, and will go away when the node goes away. Need to duplicate 
+			newUiNode->SetNodeUserData(DuplicateObject(savedAssetNode->NodeUserData, savedAssetNode)); //The object is parented to the node, and will go away when the node goes away. Need to duplicate 
 		}
 		else
 		{
-			newUiNode->SetNodeInfo(NewObject<UPlogRtEncounterSegmentNodeUserData>(savedAssetNode));
+			newUiNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(savedAssetNode));
 		}
 
 		//for each pin in the SAVED node, create a pin in the UI node
@@ -418,14 +419,14 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 	workingEncounterAsset->Segments.Empty();
 
 	//array of graph segment nodes (like literally the ones in the UI graph)
-	TArray<UParalogueSegmentGraphNode*> graphSegmentNodes;
+	TArray<UPlogEdSegmentGraphNode*> graphSegmentNodes;
 	uiDialogueGraph->GetNodesOfClass(graphSegmentNodes);
 
 
 	//loop through each encounter segment in the graph
 	for (int i = 0; i < graphSegmentNodes.Num(); i++)
 	{
-		UParalogueSegmentGraphNode* thisNode = graphSegmentNodes[i];
+		UPlogEdSegmentGraphNode* thisNode = graphSegmentNodes[i];
 
 		//Start with the nodes with no inputs, and then recursively navigate their connections to save them
 		UEdGraphPin* inputPin = thisNode->FindPin(TEXT("Input"), EEdGraphPinDirection::EGPD_Input); //todo: man this manual hard-coded string in the check is a bit wonky
@@ -449,7 +450,7 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 	}
 }
 
-UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphNode(UParalogueSegmentGraphNode* node)
+UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphNode(UPlogEdSegmentGraphNode* node)
 {
 	//Don't want duplicate segments, so just make sure there isn't already one that we can just grab instead
 	UEncounterSegment* thisEncounterSegment = node->GetSegmentTempData();
@@ -459,7 +460,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 	}
 	//===================================
 	
-	UPlogRtEncounterSegmentNodeUserData* segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(node->GetNodeInfo());
+	UPlogRtEncounterSegmentNodeUserData* segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(node->GetNodeUserData());
 	if (segmentNodeUserData == nullptr)
 	{
 		UE_LOG(ParalogueEditor, Warning, TEXT("Failed attempt to cast node user data as segment node user data"));
@@ -511,7 +512,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 				//TArray<UEdGraphPin*> links = thisPin->LinkedTo;
 				UEdGraphPin* linkedPin = thisPin->LinkedTo[0]; //just the first index, because if these output pins are ever linked to more than one thing, something else is more broken than this would be
 				UEdGraphNode* linkedNode = linkedPin->GetOwningNode(); //todo - work out having multiple outputs connected to one input (avoid creating more than one segment for it in that case, etc...)
-				if (UParalogueSegmentGraphNode* npcResponseNode = Cast<UParalogueSegmentGraphNode>(linkedNode))  //if its a segment node, link up the player option to the response to that option
+				if (UPlogEdSegmentGraphNode* npcResponseNode = Cast<UPlogEdSegmentGraphNode>(linkedNode))  //if its a segment node, link up the player option to the response to that option
 				{
 
 					//PARSE HERE ? no, silly goose. why would we parse this encounter segment in the loop section reserved for setting up/dealing with the next recursion iteration
@@ -528,7 +529,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 					//thisEncounterSegment->PlayerOptionToNextSegment[thisOutPinIndex] = TPair<FText, UEncounterSegment*>(FText(), npcResponse);
 					if (segmentNodeUserData->PlayerResponseOptions.IsValidIndex(thisOutPinIndex))
 					{
-						//thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>(node->GetNodeInfo()->PlayerResponseOptions[thisOutPinIndex], npcResponse));
+						//thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>(node->GetNodeUserData()->PlayerResponseOptions[thisOutPinIndex], npcResponse));
 						thisEncounterSegment->PlayerOptions.Add(FText(segmentNodeUserData->PlayerResponseOptions[thisOutPinIndex]));
 						thisEncounterSegment->NextSegmentSelector.Add(npcResponse);
 					}

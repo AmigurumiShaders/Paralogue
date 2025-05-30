@@ -11,18 +11,19 @@
 #include "ParalogueSegmentGraphNode.generated.h"
 
 
+DECLARE_LOG_CATEGORY_EXTERN(ParalogueEditorNodes, Log, All);
 /**
  * 
  */
 UCLASS()
-class PARALOGUEEDITOR_API UParalogueSegmentGraphNode : public UPlogEdEncounterGraphNode
+class PARALOGUEEDITOR_API UPlogEdSegmentGraphNode : public UPlogEdEncounterGraphNode
 {
 	GENERATED_BODY()
 	
 public:
-	UParalogueSegmentGraphNode();
+	UPlogEdSegmentGraphNode();
 
-	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override { return segmentNodeData->Title; }
+	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override { return segmentNodeUserData->Title; }
 	virtual FLinearColor GetNodeTitleColor() const override { return nodeTitleColor; }
 	virtual bool CanUserDeleteNode() const override { return canUserDelete; }
 	virtual void GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const override;
@@ -31,8 +32,8 @@ public:
 
 	UEdGraphPin* CreateCustomPin(EEdGraphPinDirection direction, FName name);
 	void SyncPinsWithResponses();
-	void SetNodeInfo(class UPlogRtNodeUserData* data) { segmentNodeData = data; }
-	class UPlogRtNodeUserData* GetNodeInfo() { return segmentNodeData; }
+	void SetNodeUserData(class UPlogRtNodeUserData* data);// { segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(data); } //cheating with no error catching if cast fails, oops
+	class UPlogRtEncounterSegmentNodeUserData* GetNodeUserData() { return segmentNodeUserData; }
 
 	UEncounterSegment* GetSegmentTempData() { return processedTempData; }
 	void SetSegmentTempData(UEncounterSegment* input) { processedTempData = input; }
@@ -47,7 +48,7 @@ private:
 	FExecuteAction deletePinLambda;
 	FExecuteAction deleteNodeLambda;
 
-	class UPlogRtNodeUserData* segmentNodeData;
+	class UPlogRtEncounterSegmentNodeUserData* segmentNodeUserData;
 	//temporarily holds the processed encounter segment, making it easier to hook up with multiple inputs to this node
 	UEncounterSegment* processedTempData = nullptr; // I still am unaware if there is a better way of avoiding duplicates. Going with this simply appears to be the most effective use of my time with my current knowledge.
 	

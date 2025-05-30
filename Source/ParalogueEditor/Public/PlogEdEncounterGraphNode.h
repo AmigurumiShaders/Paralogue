@@ -13,5 +13,13 @@ UCLASS()
 class PARALOGUEEDITOR_API UPlogEdEncounterGraphNode : public UEdGraphNode
 {
 	GENERATED_BODY()
+
+public:
+
+
+protected:
+
+
+private:
 	
 };
