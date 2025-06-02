@@ -8,8 +8,10 @@ That being said, the current core feature goals include:
 Current build can be found in the Paralogue.zip file in the root of this repository.
 
 Within the root folder of your project, create a folder called "Plugins" (if not already there)
+
 ![Pasted image 20250602173926](https://github.com/user-attachments/assets/0a68dae2-2c02-43dc-a519-38f8a1d7a7e3)
 
 Unzip Paralogue.zip and add it under its own folder within Plugins
 To open demo world: Navigate to Paralogue>Content>PrototypeDemo and open DemoWorld
-Before running the world, the settings for the world must be changed to be FirstPersonGameMode with the ParalogueDemo first person controller blueprint (as shown here): ![Pasted image 20250602174536](https://github.com/user-attachments/assets/0dd34654-dea8-4a8a-9ee5-b419995a970d)
+Before running the world, the settings for the world must be changed to be FirstPersonGameMode with the ParalogueDemo first person controller blueprint (as shown here):
+![Pasted image 20250602174536](https://github.com/user-attachments/assets/0dd34654-dea8-4a8a-9ee5-b419995a970d)
