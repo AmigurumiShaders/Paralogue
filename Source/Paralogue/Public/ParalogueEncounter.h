@@ -16,6 +16,7 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(ParalogueRuntime, Log, All);
 
+
 //USTRUCT(BlueprintType) struct FSegmentGraphNodeData
 //{
 //	GENERATED_USTRUCT_BODY()
@@ -49,18 +50,18 @@ class PARALOGUE_API UEncounterSegment : public UObject
 public:
 
 	//Lines of text that the NPC says, each array element is one page
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Dialogue")
 	TArray<FString> NpcLines;
 
 	//Selector for the next dialogue segment, match idx with NpcLines idx
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Dialogue")
 	TArray<int> NpcFaceSelector;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Dialogue")
 	TArray<FText> PlayerOptions;
 
 	//Selector for the next dialogue segment, match idx with PlayerOption idx
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Dialogue")
 	TArray<UEncounterSegment*> NextSegmentSelector;
 
 	UPROPERTY(EditAnywhere, Category = "Route Flags")
@@ -101,8 +102,8 @@ public:
 	/*UPROPERTY(EditAnywhere)
 	UParalogueEncounter* TestChildHolder;*/
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void TestEncounterEvent();
+	//UFUNCTION(BlueprintImplementableEvent)
+	//void TestEncounterEvent();
 
 	//all this because apparently the other way doesnt work with connectins...
 	//void SetPreSaveListener(std::function<void()> onPreSaveListener) { _onPreSaveListener = onPreSaveListener; }
@@ -123,7 +124,7 @@ public:
 	//void ClearEncounter(); //clears the segments, might be useful for saving the asset...
 	void SetGraphData(UPlogRtEditorSavedGraphData* data) { graphData = data; }
 	UPlogRtEditorSavedGraphData* GetGraphData() { return graphData; }
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Editor")
 	UPlogRtEditorSavedGraphData* graphData = nullptr;
 	
 	// =============================
@@ -134,38 +135,38 @@ public:
 	//[todo: probably should use props rather than public variables for that array]
 	UPROPERTY(VisibleAnywhere, Category = "Content")
 	TArray<UEncounterSegment*> Segments; 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "AAAAAAAAA")
 	UEncounterSegment* startingSegment; //not necessary?
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	FString GetCurrentNpcText();
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	int GetCurrentNpcFaceIdx();
 	//Sets up the encounter to the starting conditions, including setting the current line to the first line of dialogue
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	void SetEncounterToStart(AActor* owningActor); //need world context bc thats what GetGameInstance needs, and passing from BPs is the least gross and least time-consuming way I can think of
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	TArray<int> GetPlayerResponseLog() { return playerResponseLog; }
 
 	//Options within the current encounter that the player has to respond to the npc
-	UPROPERTY(BlueprintReadOnly, Transient)
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "AAAAAAAAA")
 	TArray<FText> DisplayedPlayerOptions;
 	//Set to true when there are no dialogue pages left, and there are dialogue options available in the segment
-	UPROPERTY(BlueprintReadOnly, Transient)
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "AAAAAAAAA")
 	bool AwaitingPlayerResponse;
 	//Set to true when the encounter reaches the end of the available dialogue pages with no responses (or otherwise other branches) available in the segment
-	UPROPERTY(BlueprintReadOnly, Transient)
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "AAAAAAAAA")
 	bool ReachedEncounterEnd = false;
 
 	//Input the index corresponding to the response the player selected. This function will select the next segment based on that index (or exit the dialogue)
 	//Enter -1 to exit encounter
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	void ProcessPlayerResponse(int playerSelected);
 
 private:
 	//advances the current dialogue display by one page
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	void PageForward(); 
 
 
@@ -179,7 +180,7 @@ private:
 	int currentPageCount;
 	int currentPageIndex;
 
-	UWorld* worldContextObj;
+	UObject* worldContextObj;
 
 	//UPROPERTY(BlueprintReadOnly)
 	UEncounterSegment* currentSegment;

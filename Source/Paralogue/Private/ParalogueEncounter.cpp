@@ -5,8 +5,10 @@
 #include "UObject/ObjectSaveContext.h"
 
 #include "ParalogueEncounterGraphData.h"
+#include "Engine/GameInstance.h"
 
 DEFINE_LOG_CATEGORY(ParalogueRuntime);
+
 
 UParalogueEncounter::UParalogueEncounter()
 {
@@ -63,13 +65,12 @@ int UParalogueEncounter::GetCurrentNpcFaceIdx()
 
 void UParalogueEncounter::SetEncounterToStart(AActor* owningActor)
 {
-	worldContextObj = owningActor->GetWorld(); //GetWorld does not appear to be blueprint callable, so we are taking the actor reference and calling it here in c++
-	//todo: actually, the encounters should probably get an actual owner to begin with. I'm sure it would be more proper.
-	// it would also make far more sense to the user to not have to pass in a random actor pointer 
-	// into the first bp callable function I thought would work. However this is already working
-	// and idk how to give it an owner off the top of my head. The entirety of my UE experience says just 
-	// looking up how to do that would either be quicker than typing all this, or it would be a 3 day saga 
-	// frought with the consequences of my actions. This is my line in the sand dude, so onto the polish pile this goes. (this was not the polish mountain comeback i expected)
+	worldContextObj = owningActor;// ->GetWorld(); //GetWorld does not appear to be blueprint callable, so we are taking the actor reference and calling it here in c++
+	// (after a few other attempts this appears to be the most sane way to talk to the subsystem. Setting an outer for the encounters
+	// just causes them to get caught up in garbage collection even between PIE sessions, which I would not have guessed. 
+	// Getting the subsystem ahead of time causes an error when trying to set the flags sometimes and I just dont have the time to
+	// pick that apart right now
+	// 
 	ReachedEncounterEnd = false;
 	DisplayedPlayerOptions.Empty(); //just making sure its clear (can probably remove if transient specifier is working how i think it is
 	//SetUpNewSegment(0);
@@ -86,6 +87,7 @@ void UParalogueEncounter::SetUpNewSegment()
 		return;
 	}
 
+	
 	UGameplayStatics::GetGameInstance(worldContextObj)->
 		GetSubsystem<UParalogueGameInstanceSubsystem>()->
 		SetRouteFlag(currentSegment->FlagToSet, currentSegment->FlagValue);

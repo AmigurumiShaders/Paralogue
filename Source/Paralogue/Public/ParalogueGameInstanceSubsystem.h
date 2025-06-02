@@ -27,17 +27,17 @@ class PARALOGUE_API UParalogueGameInstanceSubsystem : public UGameInstanceSubsys
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Paralogue")
 	void SetRouteVariable(FName variableName, int variableValue);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Paralogue")
 	int GetRouteVariable(FName variableName);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Paralogue")
 	void SetRouteFlag(FName flagName, bool flagValue) { routeFlags.FindOrAdd(flagName, flagValue); }
 	/// <summary>
 	/// Get the true or false value for the given route flag
 	/// </summary>
 	/// <returns>The boolean value of the flag if it is found, or false if the flag does not exist</returns>
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Paralogue")
 	bool GetRouteFlag(FName flagName);
 
 	//not making this bpcallable because we're doing this for the user and I'm pretty sure anything they could possibly gain by adding to this manually could just be accomplished by adding a Route Variable instead
@@ -52,7 +52,7 @@ public:
 	/// All dialogue responses made by the player are recorded by the plugin within UParalogueGameInstanceSubsystem. Use this function to get that data
 	/// </summary>
 	/// <returns>Array of response options for given encounter. Returns empty array if encounter does not exist</returns>
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Paralogue")
 	TArray<int> GetResponseDataByEncounter(FName encounterName);
 	
 private:
