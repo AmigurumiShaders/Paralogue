@@ -19,7 +19,7 @@ DEFINE_LOG_CATEGORY(ParalogueEditor);
 void ParalogueEncounterEditorToolkit::InitEditor(const TArray<UObject*>& InObjects)
 {
 	workingEncounterAsset = Cast<UParalogueEncounter>(InObjects[0]); //maybe rename to ThisParalogueEncounter?
-	//workingEncounterAsset->SetPreSaveListener([this]() {OnWorkingAssetPreSave(); });
+	workingEncounterAsset->SetPreSaveListener([this]() {OnWorkingAssetPreSave(); });
 
 	uiDialogueGraph = FBlueprintEditorUtils::CreateNewGraph(
 		workingEncounterAsset,
@@ -59,12 +59,7 @@ void ParalogueEncounterEditorToolkit::InitEditor(const TArray<UObject*>& InObjec
 		);
 	FAssetEditorToolkit::InitAssetEditor(EToolkitMode::Standalone, {}, "ParalogueEncounterEditor", Layout, true, true, InObjects);
 
-	UpdateGraphFromEncounterAsset();//is this not being called in a place it should be??
-
-	//do i really have to cant i just trigger a change whenever theres a connection myself
-	graphChangeListenerHandler = uiDialogueGraph->AddOnGraphChangedHandler(
-		FOnGraphChanged::FDelegate::CreateSP(this, &ParalogueEncounterEditorToolkit::OnGraphChanged)
-	);
+	UpdateGraphFromEncounterAsset();
 }
 
 void ParalogueEncounterEditorToolkit::RegisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
@@ -151,28 +146,28 @@ void ParalogueEncounterEditorToolkit::UnregisterTabSpawners(const TSharedRef<cla
 
 void ParalogueEncounterEditorToolkit::OnClose()
 {
-	UpdateEncounterAssetFromGraph(); //TODO probably want to ask whether to save when closing rather than just doing it (and also implementing a save button in general)
-	uiDialogueGraph->RemoveOnGraphChangedHandler(graphChangeListenerHandler);
-	//workingEncounterAsset->SetPreSaveListener(nullptr);
+	UpdateEncounterAssetFromGraph(); //TODO does unreal automatically ask if you want to save when you close a tab? I do not think so...
+	//uiDialogueGraph->RemoveOnGraphChangedHandler(graphChangeListenerHandler);
+	workingEncounterAsset->SetPreSaveListener(nullptr);
 	FAssetEditorToolkit::OnClose();
 }
 
-//void ParalogueEncounterEditorToolkit::OnWorkingAssetPreSave() {
-//	// Update our asset from the graph just before saving it
-//	UpdateEncounterAssetFromGraph();
-//}
-void ParalogueEncounterEditorToolkit::OnGraphChanged(const FEdGraphEditAction& editAction)
-{
-	UE_LOG(ParalogueEditor, Log, TEXT("OnGraphChanged triggered"));
-
-	//apparently this doesnt actually get called when you link pins together???
-
-
+void ParalogueEncounterEditorToolkit::OnWorkingAssetPreSave() {
+	
 	UpdateEncounterAssetFromGraph();
-
-	//just gonna put this here for now, not sure if theres a better place
-	BuildIngameEncounterFromGraph();
 }
+//void ParalogueEncounterEditorToolkit::OnGraphChanged(const FEdGraphEditAction& editAction)
+//{
+//	UE_LOG(ParalogueEditor, Log, TEXT("OnGraphChanged triggered"));
+//
+//	//apparently this doesnt actually get called when you link pins together???
+//
+//
+//	UpdateEncounterAssetFromGraph();
+//
+//	//just gonna put this here for now, not sure if theres a better place
+//	BuildIngameEncounterFromGraph();
+//}
 
 void ParalogueEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated(const FPropertyChangedEvent& event)
 {
@@ -240,7 +235,7 @@ void ParalogueEncounterEditorToolkit::OnGraphSelectionChanged(const FGraphPanelS
 
 void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 {
-	if (workingEncounterAsset == nullptr || uiDialogueGraph == nullptr) //ensure that we have a working asset and a graph
+	if (workingEncounterAsset == nullptr || uiDialogueGraph == nullptr)
 	{
 		return;
 	}
@@ -272,7 +267,8 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 		UPlogRtEditorSavedNodeData* assetNodeData = NewObject<UPlogRtEditorSavedNodeData>(graphDataToSave);
 		assetNodeData->Position = FVector2D(uiNode->NodePosX, uiNode->NodePosY);
 
-		assetNodeData->NodeUserData = uiGraphNode->GetNodeUserData();
+		//need to ensure that the node user data has the proper Outer object, which would be something that also gets saved
+		assetNodeData->NodeUserData = DuplicateObject(uiGraphNode->GetNodeUserData(), assetNodeData); // uiGraphNode->GetNodeUserData();
 
 		//for each pin in the node, save its data and get any connections it has
 		for (UEdGraphPin* uiPin : uiNode->Pins)
@@ -322,6 +318,8 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 {
 	if (workingEncounterAsset->GetGraphData() == nullptr)
 	{
+		UE_LOG(ParalogueEditor, Warning, TEXT("graph data not found"));
+
 		return;
 	}
 
@@ -348,11 +346,11 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 
 		if (savedAssetNode->NodeUserData != nullptr)
 		{
-			newUiNode->SetNodeUserData(DuplicateObject(savedAssetNode->NodeUserData, savedAssetNode)); //The object is parented to the node, and will go away when the node goes away. Need to duplicate 
+			newUiNode->SetNodeUserData(DuplicateObject(savedAssetNode->NodeUserData, newUiNode)); //The object is parented to the node, and will go away when the node goes away. Need to duplicate 
 		}
 		else
 		{
-			newUiNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(savedAssetNode));
+			newUiNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(newUiNode));
 		}
 
 		//for each pin in the SAVED node, create a pin in the UI node
@@ -393,7 +391,7 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 
 	}
 
-	//now that all the nodes are created and connections retreived, we can loop through and apply the connections to the UI graph
+	//now that all the nodes are created and connections retreived, we can apply the connections to the UI graph
 	for (TPair<FGuid, FGuid> connection : connections)
 	{
 		//use the map to grab the pin by its guid (unfortunately tpair calls them key/value, which is sort of making it weird when using both as map keys...)

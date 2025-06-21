@@ -23,7 +23,7 @@ class PARALOGUEEDITOR_API UPlogEdSegmentGraphNode : public UPlogEdEncounterGraph
 public:
 	UPlogEdSegmentGraphNode();
 
-	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override { return segmentNodeUserData->Title; }
+	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const override;// { return segmentNodeUserData->Title; }
 	virtual FLinearColor GetNodeTitleColor() const override { return nodeTitleColor; }
 	virtual bool CanUserDeleteNode() const override { return canUserDelete; }
 	virtual void GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const override;
@@ -32,7 +32,7 @@ public:
 
 	UEdGraphPin* CreateCustomPin(EEdGraphPinDirection direction, FName name);
 	void SyncPinsWithResponses();
-	void SetNodeUserData(class UPlogRtNodeUserData* data);// { segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(data); } //cheating with no error catching if cast fails, oops
+	void SetNodeUserData(class UPlogRtNodeUserData* data);
 	class UPlogRtEncounterSegmentNodeUserData* GetNodeUserData() { return segmentNodeUserData; }
 
 	UEncounterSegment* GetSegmentTempData() { return processedTempData; }
@@ -48,7 +48,8 @@ private:
 	FExecuteAction deletePinLambda;
 	FExecuteAction deleteNodeLambda;
 
-	class UPlogRtEncounterSegmentNodeUserData* segmentNodeUserData;
+	UPROPERTY() //i will simply pass away 
+	class UPlogRtEncounterSegmentNodeUserData* segmentNodeUserData; //or could rename this segmentNodeDetailsData idk might be more explanatory than calling it "user data"
 	//temporarily holds the processed encounter segment, making it easier to hook up with multiple inputs to this node
 	UEncounterSegment* processedTempData = nullptr; // I still am unaware if there is a better way of avoiding duplicates. Going with this simply appears to be the most effective use of my time with my current knowledge.
 	

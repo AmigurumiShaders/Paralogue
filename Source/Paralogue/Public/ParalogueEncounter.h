@@ -11,7 +11,7 @@
 
 #include "ParalogueEncounterGraphData.h"
 
-//#include "<functional>" //was not finding it and i dont care right now actually
+#include <functional>
 #include "ParalogueEncounter.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(ParalogueRuntime, Log, All);
@@ -105,10 +105,6 @@ public:
 	//UFUNCTION(BlueprintImplementableEvent)
 	//void TestEncounterEvent();
 
-	//all this because apparently the other way doesnt work with connectins...
-	//void SetPreSaveListener(std::function<void()> onPreSaveListener) { _onPreSaveListener = onPreSaveListener; }
-	//virtual void PreSave(FObjectPreSaveContext saveContext) override;
-
 	//UFUNCTION(CallInEditor, Category = "Testing")
 	//void LogAllSegmentData();
 	//UFUNCTION(CallInEditor, Category = "Testing")
@@ -118,6 +114,10 @@ public:
 	//UFUNCTION(CallInEditor, Category = "Testing")
 	//void InitSegment();
 	
+	//all this because apparently the other way doesnt work with connectins...
+	void SetPreSaveListener(std::function<void()> onPreSaveListener) { _onPreSaveListener = onPreSaveListener; }
+	virtual void PreSave(FObjectPreSaveContext saveContext) override;
+
 
 
 
@@ -190,4 +190,6 @@ private:
 	FString endOfSegment = "Reached end of segment";
 	TArray<int> playerResponseLog;
 
+
+	std::function<void()> _onPreSaveListener = nullptr;
 };

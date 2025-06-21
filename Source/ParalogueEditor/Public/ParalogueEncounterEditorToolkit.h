@@ -40,7 +40,7 @@ public:
 
 	void SetWorkingGraphSlateDisplay(TSharedPtr<SGraphEditor> slateDisplay) { workingGraphSlateDisplay = slateDisplay; }; 
 	void OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection);
-	void SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView); //this is weird to have as private but may still be necessary for that delegate function?
+	void SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView);
 
 	UPlogEdSegmentGraphNode* GetSelectedNode (const FGraphPanelSelectionSet& selection);
 	
@@ -91,5 +91,5 @@ private:
 	/// <param name="dialogueTextDestination">Reference to array to write text data to</param>
 	/// <param name="dialogueFacesDestination">Reference to array to write face data to</param>
 	void ParseSegmentText(FText segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination);
-	FDelegateHandle graphChangeListenerHandler;
+	//FDelegateHandle graphChangeListenerHandler;
 };

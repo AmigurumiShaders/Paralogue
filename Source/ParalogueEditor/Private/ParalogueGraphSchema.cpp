@@ -59,7 +59,7 @@ UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* 
 	newSegmentNode->NodePosX = location.X;
 	newSegmentNode->NodePosY = location.Y;
 
-	newSegmentNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(newSegmentNode));//setting outer object (info on outer: https://forums.unrealengine.com/t/what-is-meant-by-outer-object/40985)
+	newSegmentNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(newSegmentNode));
 
 
 	// i want to find a better name for the input node...

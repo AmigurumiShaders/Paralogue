@@ -57,6 +57,21 @@ UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
 
 }
 
+FText UPlogEdSegmentGraphNode::GetNodeTitle(ENodeTitleType::Type titleType) const
+{
+		return segmentNodeUserData->Title;
+	//if (segmentNodeUserData->IsValidLowLevel()) //segmentNodeUserData!=nullptr)//
+	//{
+	//	return segmentNodeUserData->Title;
+	//}
+	//else
+	//{
+	//	UE_LOG(ParalogueEditorNodes, Warning, TEXT("Attempted access of invalid user data"))
+
+	//	return FText::FromString(TEXT("INVALID USER DATA"));
+	//}
+}
+
 
 void UPlogEdSegmentGraphNode::GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const
 {

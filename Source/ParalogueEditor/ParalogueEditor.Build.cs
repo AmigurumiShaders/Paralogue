@@ -44,7 +44,8 @@ public class ParalogueEditor : ModuleRules
 				"Paralogue", //make <-THAT module a dependency of THIS one, so that this module can use the stuff defined there (like the custom asset type)
                 "UnrealEd", // apparently this is needed for registering the asset type actions. i think Ed is short for Editor?
 				"AssetTools",
-				"ToolMenus", // for using UToolMenu
+                "PropertyEditor",
+                "ToolMenus", // for using UToolMenu
 				"GraphEditor", // for customizing pins? or for linking pins. vid guy said he would explain and then Didnt lol
 				"Projects", //allows for custom icons through stylesets
 			}

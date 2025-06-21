@@ -21,10 +21,10 @@ public:
 
 };
 
-UCLASS() //maybe make BlueprintType?
 /// <summary>
 /// Data for the main encounter segments
 /// </summary>
+UCLASS()
 class PARALOGUE_API UPlogRtEncounterSegmentNodeUserData : public UPlogRtNodeUserData {
 	GENERATED_BODY()
 public:
