@@ -92,5 +92,13 @@ private:
 	/// <param name="dialogueTextDestination">Reference to array to write text data to</param>
 	/// <param name="dialogueFacesDestination">Reference to array to write face data to</param>
 	void ParseSegmentText(FText segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination);
+	
+	/// <summary>
+	/// Parse array of combined text and face data into separate arays
+	/// </summary>
+	/// <param name="segmentText">ARRAY of FText, each element being a page of dialogue with face data</param>
+	/// <param name="dialogueTextDestination">Reference to array to write text data to</param>
+	/// <param name="dialogueFacesDestination">Reference to array to write face data to</param>
+	void ParseSegmentText(TArray<FText> segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination);
 	//FDelegateHandle graphChangeListenerHandler;
 };

@@ -62,7 +62,9 @@ UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
 
 FText UPlogEdSegmentGraphNode::GetNodeTitle(ENodeTitleType::Type titleType) const
 {
-		return segmentNodeUserData->Title;
+	return FText::FromString(
+		LabelIfStart() + 
+		segmentNodeUserData->Title.ToString());
 	//if (segmentNodeUserData->IsValidLowLevel()) //segmentNodeUserData!=nullptr)//
 	//{
 	//	return segmentNodeUserData->Title;

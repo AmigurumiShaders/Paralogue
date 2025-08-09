@@ -35,6 +35,11 @@ public:
 
 	UEdGraphPin* EncounterGraphCreatePin(EEdGraphPinDirection direction, FName name);
 protected:
+	/// <summary>
+	/// Returns the string for labeling starting nodes if the node is marked as a starting node. Otherwise, returns empty string
+	/// </summary>
+	FString LabelIfStart() const;
+
 	bool canUserDelete = true;
 	FLinearColor nodeTitleColor = FLinearColor(FColor::Silver);
 	
@@ -43,6 +48,7 @@ protected:
 
 	UPROPERTY(/*woe upon ye who forgets the uproperty*/)
 	class UPlogRtNodeUserData* segmentNodeUserData; //or could rename this segmentNodeDetailsData idk might be more explanatory than calling it "user data"
+
 
 private:
 

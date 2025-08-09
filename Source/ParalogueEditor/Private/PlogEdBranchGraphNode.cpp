@@ -3,6 +3,7 @@
 
 #include "PlogEdBranchGraphNode.h"
 
+
 UPlogEdBranchGraphNode::UPlogEdBranchGraphNode()
 {
 	//changing defaults from base class
@@ -33,6 +34,9 @@ void UPlogEdBranchGraphNode::InitDefaultPins()
 }
 
 FText UPlogEdBranchGraphNode::GetNodeTitle(ENodeTitleType::Type titleType) const
-{
-	return segmentNodeUserData->Title;
+{	
+	return FText::FromString(
+		LabelIfStart() +
+		TEXT("Flag: ") +
+		Cast<UPlogRtEncounterBranchNodeUserData>(segmentNodeUserData)->FlagToCheck.ToString());
 }

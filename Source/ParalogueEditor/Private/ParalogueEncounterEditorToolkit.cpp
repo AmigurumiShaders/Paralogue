@@ -450,7 +450,15 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 		{
 			if (startNodeFound) 
 			{
-				UE_LOG(ParalogueEditor, Error, TEXT("More than one node has been flagged as a starting node. Please ensure that only one node is selected to be starting node"));
+				UE_LOG(ParalogueEditor, Error, 
+					TEXT("More than one node has been flagged as a starting node. Please ensure that only one node is selected to be starting node"));
+				return;
+			}
+			if (inputPin->HasAnyConnections())
+			{
+				UE_LOG(ParalogueEditor, Error, 
+					TEXT("Node with title %s is marked as a starting node, but has links on the input pin"), 
+					*thisNode->GetNodeTitle(ENodeTitleType::FullTitle).ToString());
 				return;
 			}
 
@@ -653,6 +661,27 @@ void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray
 	}
 }
 
+
+void ParalogueEncounterEditorToolkit::ParseSegmentText(TArray<FText> segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination)
+{
+
+	//then separate the faces from the lines
+	for (int i = 0; i < segmentText.Num(); i++)
+	{
+		//split string
+		FString faceNumberStr;
+		FString npcLinesText;
+		segmentText[i].ToString().Split(L"|", &faceNumberStr, &npcLinesText); //supposed to be more efficient than ParseIntoArray
+
+		//convert to int
+		int faceNumber = FCString::Atoi(*faceNumberStr); //this function is apparently "unsafe; no way to indicate errors" https://unreal.gg-labs.com/wiki-archives/macros-and-data-types/string-conversions#fstring-to-integer
+
+		//write to arrays
+		//destinationArray->Add(TPair<FString, int>(npcLinesText, faceNumber));
+		dialogueTextDestination->Add(npcLinesText);
+		dialogueFacesDestination->Add(faceNumber);
+	}
+}
 
 
 

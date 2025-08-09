@@ -17,3 +17,13 @@ UEdGraphPin* UPlogEdBaseEncounterGraphNode::EncounterGraphCreatePin(EEdGraphPinD
 
 	return pin;
 }
+
+FString UPlogEdBaseEncounterGraphNode::LabelIfStart() const
+{
+	if (segmentNodeUserData->SetAsStartNode)
+	{
+		return TEXT("ENCOUNTER START ");
+
+	}
+	return TEXT("");
+};
