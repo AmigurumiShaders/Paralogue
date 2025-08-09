@@ -78,6 +78,25 @@ void UParalogueEncounter::SetEncounterToStart(AActor* owningActor)
 	SetUpNewSegment();
 }
 
+void UParalogueEncounter::TraverseToNextNonBranch()
+{
+	while (currentSegment->IsBranch)
+	{
+		bool flagValue = UGameplayStatics::GetGameInstance(worldContextObj)->
+			GetSubsystem<UParalogueGameInstanceSubsystem>()->
+			GetRouteFlag(currentSegment->FlagToCheck);
+
+		if (flagValue)
+		{
+			currentSegment = currentSegment->NextSegmentForTrue;
+		}
+		else
+		{
+			currentSegment = currentSegment->NextSegmentForFalse;
+		}
+	}
+}
+
 void UParalogueEncounter::SetUpNewSegment()
 {
 	//make sure currentSegment is set
@@ -87,6 +106,7 @@ void UParalogueEncounter::SetUpNewSegment()
 		return;
 	}
 
+	TraverseToNextNonBranch();
 	
 	UGameplayStatics::GetGameInstance(worldContextObj)->
 		GetSubsystem<UParalogueGameInstanceSubsystem>()->

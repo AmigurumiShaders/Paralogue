@@ -19,6 +19,8 @@ public:
 	FText Description; //maybe call this writer comment or something later but not worth overthinking now
 	//todo: it appears unreal maybe has some sort of "info" type, which might be a good thing to change this to
 
+	UPROPERTY(EditAnywhere, Category = "Meta")
+	bool SetAsStartNode = false;
 };
 
 /// <summary>
@@ -39,4 +41,15 @@ public:
 	FName FlagToSet;
 	UPROPERTY(EditAnywhere, Category = "Route Flags")
 	bool FlagValue;
+};
+
+/// <summary>
+/// Simply the name of the route flag to check to decide on the branch
+/// </summary>
+UCLASS()
+class PARALOGUE_API UPlogRtEncounterBranchNodeUserData : public UPlogRtNodeUserData {
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, Category = "Route Flags")
+	FName FlagToCheck;
 };

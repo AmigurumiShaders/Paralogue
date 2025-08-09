@@ -18,6 +18,7 @@ class PARALOGUEEDITOR_API UParalogueGraphSchema : public UEdGraphSchema
 public:
 	virtual void GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const override;
 	virtual const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* a, const UEdGraphPin* b) const override;
+
 };
 
 
@@ -29,8 +30,8 @@ struct FNewNodeAction : public FEdGraphSchemaAction {
 public:
 	FNewNodeAction() {};
 
-	FNewNodeAction(FText inNodeCategory, FText inMenuDesc, FText inToolTip, const int32 inGrouping)
-	: FEdGraphSchemaAction(inNodeCategory, inMenuDesc, inToolTip, inGrouping) {}; // passing all these to the parent class - "this is how we tell the action what it displays when it comes up in the menu"
+	FNewNodeAction(UClass* classTemplate, FText inNodeCategory, FText inMenuDesc, FText inToolTip, const int32 inGrouping)
+	: FEdGraphSchemaAction(inNodeCategory, inMenuDesc, inToolTip, inGrouping), classTemplate(classTemplate) {}; // passing all these to the parent class - "this is how we tell the action what it displays when it comes up in the menu"
 
 	//actually defining how to perform this action
 
@@ -39,4 +40,7 @@ public:
 		UEdGraphPin* fromPin, 	//if created from drag/drop of a pin, this is that pin
 		const FVector2D location, //cursor location, to use to create the node
 		bool bSelectNewNode = true); //whether or not to automatically select the new node after its created
+
+protected:
+	UClass* classTemplate = nullptr;
 };

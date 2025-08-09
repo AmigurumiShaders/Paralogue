@@ -32,23 +32,36 @@ DECLARE_LOG_CATEGORY_EXTERN(ParalogueRuntime, Log, All);
 //{
 //	GENERATED_USTRUCT_BODY()
 
+//UCLASS()
+//class PARALOGUE_API UEncounterRouteControl
+//
+//UCLASS()
+//class PARALOGUE_API UEncounterBranch : public UObject
+//{
+//	GENERATED_BODY()
+//public:
+//
+//};
+
 
 /// <summary>
 /// NOT the version exposed to the user to edit, this is the parsed/initialized version that is used to traverse the dialgue tree at runtime
+/// If IsBranch == true, the route traversal should ignore all data unrelated to branching
 /// </summary>
 UCLASS()
 class PARALOGUE_API UEncounterSegment : public UObject
 { 
 	GENERATED_BODY()
 	//could consider initializers called things like "init as branch" or something to simplify the code for building the encounters on editor side
-	UEncounterSegment()
-	{
-		NpcLines.Add(FString("[ctor placeholder]"));
-		//NpcLinesWithFaces.Add(TPair<FString, int>(FString("[ctor placeholder]"), 0));
-		//NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
-	}
+	//UEncounterSegment()
+	//{
+	//	NpcLines.Add(FString("[ctor placeholder]"));
+	//	//NpcLinesWithFaces.Add(TPair<FString, int>(FString("[ctor placeholder]"), 0));
+	//	//NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
+	//}
 public:
 
+	/// ----- Normal Segment Data -----
 	//Lines of text that the NPC says, each array element is one page
 	UPROPERTY(EditAnywhere, Category = "Dialogue")
 	TArray<FString> NpcLines;
@@ -69,23 +82,30 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Route Flags")
 	bool FlagValue;
 
-	//UPROPERTY(EditAnywhere, Category = "Testing")
-	//int PlayerResponseIndex; //for testing the logic of selecting the right npc response based on the player's selection (NOT planning to use this during runtime)
+	/// ----- Branch Segment Data/Setup -----
+	/// (Doing this scuffed af rn bc im not really sure the most sane way to go about this otherwise, and 
+	/// at the moment its mentally healing to finally have this be vaguely functional at least)
+	
+	void InitAsBranch(FName flagName, UEncounterSegment* trueRoute, UEncounterSegment* falseRoute)
+	{
+		IsBranch = true;
+		FlagToCheck = flagName;
+		NextSegmentForTrue = trueRoute;
+		NextSegmentForFalse = falseRoute;
+	};
 
-	/////*player dialogue options*/
-	////may actually need to be uprop, so they can be saved(?)
-	////UPROPERTY(BlueprintReadOnly)
-	//TArray<TPair<FString, int>> NpcLinesWithFaces; //lines of text the NPC says paired with the corresponding face
-	////UPROPERTY(BlueprintReadOnly)
-	////pretty sure this was because a struct couldn't have a pointer to it. switch code to use this as a fallback if the pointer version is being too difficult
-	////TArray<TPair<FText, int>> PlayerOptionToSegmentIdx; //use a tpair because even if we could use a tmap, there is no need to search by key/value. just idx
-	////UPROPERTY(BlueprintReadOnly)
-	//TArray<TPair<FText, UEncounterSegment*>> PlayerOptionToNextSegment;
+	///if this is true, all other above fields are ignored (if they even have data at all)
+	UPROPERTY(EditAnywhere, Category = "Branch Data")
+	bool IsBranch;
 
-	///*Detailed description of this segment, such as for the situation it is intended for. Like a code comment*/
-	//UPROPERTY(EditAnywhere, Category = "Meta")
-	//FText Description; //maybe call this writer comment or something later but not worth overthinking now
-	////it appears unreal maybe has some sort of "info" type, which might be a good thing to change this to
+	UPROPERTY(EditAnywhere, Category = "Branch Data")
+	FName FlagToCheck;
+
+	UPROPERTY(EditAnywhere, Category = "Branch Data")
+	UEncounterSegment* NextSegmentForTrue;
+
+	UPROPERTY(EditAnywhere, Category = "Branch Data")
+	UEncounterSegment* NextSegmentForFalse;
 
 };
 
@@ -169,6 +189,9 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	void PageForward(); 
 
+	// Branch segments do not have any dialogue or options for the player to select, 
+	// so we want to just quietly traverse until the next full segment
+	void TraverseToNextNonBranch();
 
 	//Sets up page/response arrays based on what currentSegment is set to (remember to set currentSegment BEFORE calling this)
 	void SetUpNewSegment();

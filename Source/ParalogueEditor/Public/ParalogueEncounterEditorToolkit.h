@@ -9,6 +9,7 @@
 #include "ParalogueEncounterGraphData.h"
 #include "Toolkits/AssetEditorToolkit.h"
 #include "ParalogueSegmentGraphNode.h"
+#include "PlogEdBranchGraphNode.h"
 
 
 DECLARE_LOG_CATEGORY_EXTERN(ParalogueEditor, Log, All);
@@ -42,7 +43,7 @@ public:
 	void OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection);
 	void SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView);
 
-	UPlogEdSegmentGraphNode* GetSelectedNode (const FGraphPanelSelectionSet& selection);
+	UPlogEdBaseEncounterGraphNode* GetSelectedNode (const FGraphPanelSelectionSet& selection);
 	
 	//float GetMean() const;
 	//float GetStandardDeviation() const;
@@ -75,7 +76,7 @@ private:
 	/// </summary>
 	void BuildIngameEncounterFromGraph();
 	//Recursive function for saving each child segment in the dialogue tree
-	UEncounterSegment* CreateOrFindSegmentForGraphNode(UPlogEdSegmentGraphNode* node); //maybe some index or something idk
+	UEncounterSegment* CreateOrFindSegmentForGraphNode(UPlogEdBaseEncounterGraphNode* node); //maybe some index or something idk
 	
 	/// <summary>
 	/// [[[DEPRECATED: not using tpair array anymore]]] parse delimited string of NPC dialogue and face information into the version used by the gameplay-time UEncounterSegment

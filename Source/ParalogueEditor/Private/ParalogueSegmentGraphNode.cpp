@@ -10,6 +10,9 @@ DEFINE_LOG_CATEGORY(ParalogueEditorNodes);
 
 UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
 {
+	nodeTitleColor = FLinearColor(FColor::Cyan);
+
+
 	graph = this->GetGraph();
 
 #pragma region Context Menu Lambdas
@@ -24,7 +27,7 @@ UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
 				EEdGraphPinDirection::EGPD_Output,
 				*pinName
 			);*/
-			this->GetNodeUserData()->PlayerResponseOptions.Add(FText::FromString(pinName));
+			Cast<UPlogRtEncounterSegmentNodeUserData>(this->GetNodeUserData())->PlayerResponseOptions.Add(FText::FromString(pinName));
 			this->SyncPinsWithResponses();
 
 			graph->NotifyGraphChanged();
@@ -47,7 +50,7 @@ UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
 		[this]() {
 			graph->RemoveNode(this);
 			this->SyncPinsWithResponses();
-			UE_LOG(LogTemp, Warning, TEXT("kirby video has this as removing from the end of the array and then syncing, but I want it to just trigger sync when array elements are removeed <-wow i said that and dont even remember why. Did i mix up between deleting node and lambda??"))
+			UE_LOG(LogTemp, Warning, TEXT("TODO lol kirby video has this as removing from the end of the array and then syncing, but I want it to just trigger sync when array elements are removeed <-wow i said that and dont even remember why. Did i mix up between deleting node and lambda??"))
 			//kirby video has this as removing from the end of the array and then syncing, but I want it to just trigger sync when array elements are removeed
 		}
 
@@ -104,27 +107,14 @@ void UPlogEdSegmentGraphNode::GetNodeContextMenuActions(UToolMenu* menu, UGraphN
 
 }
 
-UEdGraphPin* UPlogEdSegmentGraphNode::CreateCustomPin(EEdGraphPinDirection direction, FName name)
-{
-	FName category = (direction == EEdGraphPinDirection::EGPD_Input) ? TEXT("Inputs") : TEXT("Outputs");
-	FName subcategory = TEXT("tell the dev to give me a better name lol"); //probably dont call it custom pin
 
-	UEdGraphPin* pin = CreatePin(
-		direction,
-		category,
-		name
-	);
-	pin->PinType.PinSubCategory = subcategory;
-
-	return pin;
-}
 
 void UPlogEdSegmentGraphNode::SyncPinsWithResponses()
 {
 	// Sync the pins on the node with the dialog responses
 	// We're going to assume the first pin is always the
 	// input pin
-	UPlogRtEncounterSegmentNodeUserData* nodeData = GetNodeUserData();
+	UPlogRtEncounterSegmentNodeUserData* nodeData = Cast<UPlogRtEncounterSegmentNodeUserData>(this->GetNodeUserData());
 	int numGraphNodePins = Pins.Num() - 1;
 	int numInfoPins = nodeData->PlayerResponseOptions.Num();
 
@@ -133,7 +123,7 @@ void UPlogEdSegmentGraphNode::SyncPinsWithResponses()
 		numGraphNodePins--;
 	}
 	while (numInfoPins > numGraphNodePins) {
-		CreateCustomPin(
+		EncounterGraphCreatePin(
 			EEdGraphPinDirection::EGPD_Output,
 			FName(nodeData->PlayerResponseOptions[numGraphNodePins].ToString())
 		);
@@ -147,18 +137,18 @@ void UPlogEdSegmentGraphNode::SyncPinsWithResponses()
 		index++;
 	}
 }
-
-void UPlogEdSegmentGraphNode::SetNodeUserData(UPlogRtNodeUserData* data)
-{
-	segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(data);
-	if (data == nullptr)
-	{
-		UE_LOG(ParalogueEditorNodes, Warning, TEXT("Tried to set node user data with null object"))
-
-	}
-	else if (segmentNodeUserData == nullptr)
-	{
-		UE_LOG(ParalogueEditorNodes, Warning, TEXT("Failed cast of node user data object to segment node user data"))
-
-	}
-}
+//
+//void UPlogEdSegmentGraphNode::SetNodeUserData(UPlogRtNodeUserData* data)
+//{
+//	segmentNodeUserData = Cast<UPlogRtEncounterSegmentNodeUserData>(data);
+//	if (data == nullptr)
+//	{
+//		UE_LOG(ParalogueEditorNodes, Warning, TEXT("Tried to set node user data with null object"))
+//
+//	}
+//	else if (segmentNodeUserData == nullptr)
+//	{
+//		UE_LOG(ParalogueEditorNodes, Warning, TEXT("Failed cast of node user data object to segment node user data"))
+//
+//	}
+//}

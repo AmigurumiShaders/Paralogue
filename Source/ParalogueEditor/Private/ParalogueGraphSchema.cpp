@@ -4,21 +4,35 @@
 #include "ParalogueGraphSchema.h"
 #include "NodeEncounterSegmentData.h"
 #include "ParalogueSegmentGraphNode.h"
+#include "PlogEdBranchGraphNode.h"
 
 
 void UParalogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& contextMenuBuilder) const
 {
 	// define the list of actions for the context menu
-	TSharedPtr<FNewNodeAction> newNodeAction(
+	TSharedPtr<FNewNodeAction> newSegmentNodeAction(
 		new FNewNodeAction(
+			UPlogEdSegmentGraphNode::StaticClass(),
 			FText::FromString(TEXT("Nodes")),
-			FText::FromString(TEXT("New Paralogue Segment")),
+			FText::FromString(TEXT("New Segment Node")),
 			FText::FromString(TEXT("A Segment represents a linear segment of character interaction, which end with the player's dialogue options")),
 			0 //group id for organizing in UI
 		)
 	);
 
-	contextMenuBuilder.AddAction(newNodeAction);
+	contextMenuBuilder.AddAction(newSegmentNodeAction);
+
+	TSharedPtr<FNewNodeAction> newBranchNodeAction(
+		new FNewNodeAction(
+			UPlogEdBranchGraphNode::StaticClass(),
+			FText::FromString(TEXT("Nodes")),
+			FText::FromString(TEXT("New Branch Node")),
+			FText::FromString(TEXT("Pick a route based on an existing route flag")),
+			0 //group id for organizing in UI
+		)
+	);
+
+	contextMenuBuilder.AddAction(newBranchNodeAction);
 }
 
 const FPinConnectionResponse UParalogueGraphSchema::CanCreateConnection(const UEdGraphPin* a, const UEdGraphPin* b) const
@@ -53,45 +67,47 @@ const FPinConnectionResponse UParalogueGraphSchema::CanCreateConnection(const UE
 
 UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* fromPin, const FVector2D location, bool bSelectNewNode)
 {
-	UPlogEdSegmentGraphNode* newSegmentNode = NewObject<UPlogEdSegmentGraphNode>(parentGraph); //after making paraseg node, change to that type
-	newSegmentNode->CreateNewGuid(); //necessary for linking things together 
-	//perhaps when creating a new segment node, a new segment should be added to the encounter asset. store it in the array and then make sure that the nodes at least know which array index they are (?)
-	newSegmentNode->NodePosX = location.X;
-	newSegmentNode->NodePosY = location.Y;
-
-	newSegmentNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(newSegmentNode));
-
-
-	// i want to find a better name for the input node...
-	UEdGraphPin* inputPin = newSegmentNode->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, TEXT("Input")); //only need the return value of this one
-	newSegmentNode->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Unsynced Response")); //just something for now, maybe change it to "default" or something
-
 	
-	//using default creaet pin (by unreal)
-	//newSegmentNode->CreatePin(
-	//	EEdGraphPinDirection::EGPD_Input, //inputs are on the left side, outputs are on the right
-	//	TEXT("inputs"),
-	//	TEXT("someiinput")
-	//);
-	//newSegmentNode->CreatePin(
-	//	EEdGraphPinDirection::EGPD_Output,
-	//	TEXT("output"),
-	//	TEXT("someoutput")
-	//);
-	//newSegmentNode->CreatePin(
-	//	EEdGraphPinDirection::EGPD_Output,
-	//	TEXT("output"),
-	//	TEXT("someoutput2")
-	//);
+	UPlogEdBaseEncounterGraphNode* newEncounterNode = NewObject<UPlogEdBaseEncounterGraphNode>(parentGraph, classTemplate); //
+	//UPlogEdSegmentGraphNode* newSegmentNode = NewObject<UPlogEdSegmentGraphNode>(parentGraph); 
+	newEncounterNode->CreateNewGuid(); //necessary for linking things together 
+	
+	newEncounterNode->NodePosX = location.X;
+	newEncounterNode->NodePosY = location.Y;
 
+	//newEncounterNode->SetNodeUserData(NewObject<UPlogRtNodeUserData>(newEncounterNode));
 
-	if (fromPin != nullptr)
+	//probably only need an if for creating the default pins
+	// if its a full segment, do this, but otherwise skip(?)
+
+	UEdGraphPin* inputPin = nullptr;
+	
+	//for now at least, we only want these nodes created on segment nodes that should have dialogue options
+	if (newEncounterNode->IsA<UPlogEdSegmentGraphNode>())
+	{ 
+		UPlogEdSegmentGraphNode* newNodeAsSegment = Cast<UPlogEdSegmentGraphNode>(newEncounterNode);
+		inputPin = newNodeAsSegment->EncounterGraphCreatePin(EEdGraphPinDirection::EGPD_Input, TEXT("Input")); //only need the return value of this one
+		newNodeAsSegment->EncounterGraphCreatePin(EEdGraphPinDirection::EGPD_Output, TEXT("Unsynced Response")); //just something for now, maybe change it to "default" or something
+
+		newEncounterNode->SetNodeUserData(NewObject<UPlogRtEncounterSegmentNodeUserData>(newEncounterNode));
+	}
+	else if (newEncounterNode->IsA<UPlogEdBranchGraphNode>())
 	{
-		newSegmentNode->GetSchema()->TryCreateConnection(fromPin, inputPin);
+		newEncounterNode->InitDefaultPins();
+		inputPin = Cast<UPlogEdBranchGraphNode>(newEncounterNode)->GetInputPin();
+		newEncounterNode->SetNodeUserData(NewObject<UPlogRtEncounterBranchNodeUserData>(newEncounterNode));
+	}
+	// todo: if we add another node type especially, just put all of the pin creation on the constructors, and add
+	// the inputPin and getter to the parent. Then here we can just check if its null. Simplifies the logic a lot
+	
+
+	if (fromPin != nullptr && inputPin != nullptr)
+	{
+		newEncounterNode->GetSchema()->TryCreateConnection(fromPin, inputPin);
 	}
 
 	parentGraph->Modify(); //marks as dirty/not yet saved
-	parentGraph->AddNode(newSegmentNode, true, true);
+	parentGraph->AddNode(newEncounterNode, true, true);
 
-	return newSegmentNode;
+	return newEncounterNode;
 }
