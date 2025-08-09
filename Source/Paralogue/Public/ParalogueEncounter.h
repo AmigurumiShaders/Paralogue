@@ -64,7 +64,7 @@ public:
 	/// ----- Normal Segment Data -----
 	//Lines of text that the NPC says, each array element is one page
 	UPROPERTY(EditAnywhere, Category = "Dialogue")
-	TArray<FString> NpcLines;
+	TArray<FText> NpcLines;
 
 	//Selector for the next dialogue segment, match idx with NpcLines idx
 	UPROPERTY(EditAnywhere, Category = "Dialogue")
@@ -160,7 +160,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
-	FString GetCurrentNpcText();
+	FText GetCurrentNpcText();
 	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	int GetCurrentNpcFaceIdx();
 	//Sets up the encounter to the starting conditions, including setting the current line to the first line of dialogue
@@ -197,7 +197,7 @@ private:
 	void SetUpNewSegment();
 
 	////"page" is the term we'll use for each fill of the dialogue bubble
-	TArray<FString> currentTextPages;
+	TArray<FText> currentTextPages;
 	TArray<int> currentFaceOrder;
 	//TArray<int> currentFaceList;
 	int currentPageCount;
@@ -207,7 +207,7 @@ private:
 
 	//UPROPERTY(BlueprintReadOnly)
 	UEncounterSegment* currentSegment;
-	FString currentLine; /// todo: ououuouhhhh what was that about getters and setters again oops i forgot to go figure out how they work in unreal
+	FText currentLine; /// todo: ououuouhhhh what was that about getters and setters again oops i forgot to go figure out how they work in unreal
 	int currentFaceIdx;
 
 	FString endOfSegment = "Reached end of segment";

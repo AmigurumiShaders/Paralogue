@@ -525,13 +525,16 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 		{
 			//if there is no text to add, add placeholder text instead of leaving blank (prevents anything from breaking from trying to run an empty segment, and also tells the user rather than having this just silently fail)
 			//thisEncounterSegment->NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
-			thisEncounterSegment->NpcLines.Add(FString("[Dialogue segment not implemented]"));
+			thisEncounterSegment->NpcLines.Add(FText::FromString("[Dialogue segment not implemented]"));
 			thisEncounterSegment->NpcFaceSelector.Add(0);
 		}
 		else
 		{
+			thisEncounterSegment->NpcLines = userDataAsSegment->CharacterLines;
+			thisEncounterSegment->NpcFaceSelector = userDataAsSegment->CharacterFaces;
+
 			// parse the text (and face) info for the segment into the version that will actually be used when the game is runnning, including actually placing it into that object
-			ParseSegmentText(userDataAsSegment->CharacterLines, &thisEncounterSegment->NpcLines, &thisEncounterSegment->NpcFaceSelector);
+			//ParseSegmentText(userDataAsSegment->CharacterLines, &thisEncounterSegment->NpcLines, &thisEncounterSegment->NpcFaceSelector);
 		}
 
 		thisEncounterSegment->FlagToSet = userDataAsSegment->FlagToSet;
@@ -565,7 +568,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 
 						if (userDataAsSegment->PlayerResponseOptions.IsEmpty())
 						{
-							UE_LOG(ParalogueEditor, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLines[0]);
+							UE_LOG(ParalogueEditor, Warning, TEXT("Text for Node with no responses added: %s"), *npcResponse->NpcLines[0].ToString());
 						}
 
 						//THEN, add that segment to the responses for this segment

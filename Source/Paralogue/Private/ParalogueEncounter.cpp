@@ -53,7 +53,7 @@ void UParalogueEncounter::PreSave(FObjectPreSaveContext saveContext)
 //	UE_LOG(LogTemp, Log, TEXT("line: %s"), *currentLine)//.ToString()) //make this output the resulting dialogue path/route? give it test values maybe?
 //}
 
-FString UParalogueEncounter::GetCurrentNpcText()
+FText UParalogueEncounter::GetCurrentNpcText()
 {
 	return currentLine;
 }
