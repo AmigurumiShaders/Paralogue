@@ -32,6 +32,9 @@ public:
 	UEdGraphPin* GetFalsePin() { return falseOutPin; }
 	
 
+	virtual void GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const override;
+
+
 private:
 
 	

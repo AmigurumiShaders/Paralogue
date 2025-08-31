@@ -19,6 +19,8 @@ class PARALOGUEEDITOR_API UPlogEdBaseEncounterGraphNode : public UEdGraphNode
 	GENERATED_BODY()
 
 public:
+	//UPlogEdBaseEncounterGraphNode();
+
 	/*virtual UControlRig* GetControlRig() const PURE_VIRTUAL(FAnimNode_ControlRigBase::GetControlRig, return nullptr; );*/
 	// = 0; //pure virtual b/c I'm expecting to have different ways of storing/retreiving the title data atm
 	virtual FText GetNodeTitle(ENodeTitleType::Type titleType) const PURE_VIRTUAL(virtual FText UPlogEdBaseEncounterGraphNode::GetNodeTitle const, return FText(););

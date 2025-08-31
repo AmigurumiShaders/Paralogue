@@ -2,13 +2,18 @@
 
 
 #include "PlogEdBranchGraphNode.h"
+#include "Framework/Commands/UIAction.h"
+#include "ToolMenu.h"
+#include "NodeEncounterSegmentData.h"
+
 
 
 UPlogEdBranchGraphNode::UPlogEdBranchGraphNode()
+	//: UPlogEdBaseEncounterGraphNode()
 {
 	//changing defaults from base class
 	nodeTitleColor = FLinearColor::Red;
-
+	graph = this->GetGraph();
 }
 
 void UPlogEdBranchGraphNode::InitDefaultPins()
@@ -39,4 +44,27 @@ FText UPlogEdBranchGraphNode::GetNodeTitle(ENodeTitleType::Type titleType) const
 		LabelIfStart() +
 		TEXT("Flag: ") +
 		Cast<UPlogRtEncounterBranchNodeUserData>(segmentNodeUserData)->FlagToCheck.ToString());
+}
+
+void UPlogEdBranchGraphNode::GetNodeContextMenuActions(UToolMenu* menu, UGraphNodeContextMenuContext* context) const
+{
+	FToolMenuSection& section = menu->AddSection(TEXT("tell the dev to give me a better name lol"), FText::FromString(TEXT("Node Actions")));
+	UPlogEdBranchGraphNode* node = (UPlogEdBranchGraphNode*)this;
+	
+	section.AddMenuEntry(
+		TEXT("DeleteNode"),
+		FText::FromString(TEXT("delete node")),
+		FText::FromString(TEXT("deletes the node")),
+		FSlateIcon(TEXT("ParalogueEditorStyle"), TEXT("Paralogue.NodeDeleteNodeIcon")),
+		FUIAction(
+			FExecuteAction::CreateLambda(
+				[this, node]() {
+					graph->RemoveNode(node);
+					UE_LOG(LogTemp, Warning, TEXT("TODO lol kirby video has this as removing from the end of the array and then syncing, but I want it to just trigger sync when array elements are removeed <-wow i said that and dont even remember why. Did i mix up between deleting node and lambda??"))
+						//kirby video has this as removing from the end of the array and then syncing, but I want it to just trigger sync when array elements are removeed
+				}
+
+			)
+		)
+	);
 }

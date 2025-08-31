@@ -9,7 +9,9 @@
 DEFINE_LOG_CATEGORY(ParalogueEditorNodes);
 
 UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
+	//: UPlogEdBaseEncounterGraphNode()
 {
+	
 	nodeTitleColor = FLinearColor(FColor::Cyan);
 
 

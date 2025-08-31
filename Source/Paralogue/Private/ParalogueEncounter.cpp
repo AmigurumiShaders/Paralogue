@@ -74,7 +74,16 @@ void UParalogueEncounter::SetEncounterToStart(AActor* owningActor)
 	ReachedEncounterEnd = false;
 	DisplayedPlayerOptions.Empty(); //just making sure its clear (can probably remove if transient specifier is working how i think it is
 	//SetUpNewSegment(0);
-	currentSegment = Segments[0];
+	if (Segments.IsEmpty())
+	{
+		UE_LOG(ParalogueRuntime, Error, TEXT("Segment array empty!!!"));
+		return;
+	}
+	else 
+	{
+
+		currentSegment = Segments[0];
+	}
 	SetUpNewSegment();
 }
 
