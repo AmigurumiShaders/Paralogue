@@ -204,6 +204,7 @@ private:
 	int currentPageIndex;
 
 	UObject* worldContextObj;
+	bool encounterIsSetUp = false;
 
 	//UPROPERTY(BlueprintReadOnly)
 	UEncounterSegment* currentSegment;

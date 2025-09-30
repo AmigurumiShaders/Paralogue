@@ -85,6 +85,8 @@ void UParalogueEncounter::SetEncounterToStart(AActor* owningActor)
 		currentSegment = Segments[0];
 	}
 	SetUpNewSegment();
+
+	encounterIsSetUp = true;
 }
 
 void UParalogueEncounter::TraverseToNextNonBranch()
@@ -134,15 +136,25 @@ void UParalogueEncounter::SetUpNewSegment()
 
 	//}
 	currentPageIndex = 0;
-	if (currentPageIndex < currentTextPages.Num() && currentPageIndex < currentFaceOrder.Num()) // (had issues with array being empty before, so even index of 0 breaks it)
+	if (currentPageIndex < currentTextPages.Num() || !currentTextPages.IsEmpty()) // (had issues with array being empty before, so even index of 0 breaks it)
 	{
 		currentLine = currentTextPages[currentPageIndex];
-		currentFaceIdx = currentFaceOrder[currentPageIndex];
 
 	}
 	else
 	{
-		UE_LOG(ParalogueRuntime, Warning, TEXT("\n Tried to find current line before currentTextPages and currentFaceOrder were properly set (arrays appear to be empty)"))
+		UE_LOG(ParalogueRuntime, Warning, TEXT("\n Tried to find current line without currentTextPages being properly set (array appears to be empty). NPC's displayed dialogue will NOT advance."))
+	}
+
+	// separating the check for empty face array, so that the user isnt required to set up faces just to test dialogue
+	// (combining the checks causes it to skip advancing dialogue when the face is missing, even if there is dialogue to advance to)
+	if (currentPageIndex < currentFaceOrder.Num() || !currentFaceOrder.IsEmpty())
+	{
+		currentFaceIdx = currentFaceOrder[currentPageIndex];
+	}
+	else
+	{
+		UE_LOG(ParalogueRuntime, Warning, TEXT("\n Failed to find an NPC face for the current line of dialogue. NPC's face was NOT updated. \n Failed on dialogue line: %s"), *currentLine.ToString());
 	}
 
 	// set player response options
@@ -153,6 +165,12 @@ void UParalogueEncounter::SetUpNewSegment()
 
 void UParalogueEncounter::PageForward()
 {
+	if (!encounterIsSetUp)
+	{
+		UE_LOG(ParalogueRuntime, Warning, TEXT("\n Attempted page forward before setting up the current encounter."));
+		return;
+	}
+
 	currentPageIndex++;
 	if (currentPageIndex < currentTextPages.Num())
 	{
