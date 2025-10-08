@@ -17,7 +17,7 @@ DECLARE_LOG_CATEGORY_EXTERN(ParalogueEditor, Log, All);
 /**
  * 
  */
-class PARALOGUEEDITOR_API ParalogueEncounterEditorToolkit : public FAssetEditorToolkit
+class PARALOGUEEDITOR_API PlogEdEncounterEditorToolkit : public FAssetEditorToolkit
 {
 public:
 	void InitEditor(const TArray<UObject*>& InObjects);

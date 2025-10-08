@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
-#include "ParalogueEncounterActions.h"
+#include "PlogEdEncounterActions.h"
 #include "Styling/SlateStyle.h"
 
-class FParalogueEditorModule : public IModuleInterface
+class FPlogEdParalogueEditorModule : public IModuleInterface
 {
 public:
 
@@ -18,7 +18,7 @@ public:
 private:
 
 
-	TSharedPtr<FParalogueEncounterAssetTypeActions> ParalogueEncounterAssetTypeActions;
+	TSharedPtr<FPlogEdEncounterAssetTypeActions> ParalogueEncounterAssetTypeActions;
 
 	TSharedPtr<FSlateStyleSet> styleSet;
 

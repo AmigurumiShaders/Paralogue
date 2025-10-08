@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ParalogueEncounterEditorToolkit.h"
+#include "PlogEdEncounterEditorToolkit.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "SPlogEdEncounterWidget.h"
 #include "Modules/ModuleManager.h"
@@ -16,7 +16,7 @@
 DEFINE_LOG_CATEGORY(ParalogueEditor);
 
 //InObjects is the objects being referenced by the editor. the "open" working asset
-void ParalogueEncounterEditorToolkit::InitEditor(const TArray<UObject*>& InObjects)
+void PlogEdEncounterEditorToolkit::InitEditor(const TArray<UObject*>& InObjects)
 {
 	workingEncounterAsset = Cast<UParalogueEncounter>(InObjects[0]); //maybe rename to ThisParalogueEncounter?
 	workingEncounterAsset->SetPreSaveListener([this]() {OnWorkingAssetPreSave(); });
@@ -62,7 +62,7 @@ void ParalogueEncounterEditorToolkit::InitEditor(const TArray<UObject*>& InObjec
 	UpdateGraphFromEncounterAsset();
 }
 
-void ParalogueEncounterEditorToolkit::RegisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
+void PlogEdEncounterEditorToolkit::RegisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
 {
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 
@@ -72,7 +72,7 @@ void ParalogueEncounterEditorToolkit::RegisterTabSpawners(const TSharedRef<class
 		{
 
 			SGraphEditor::FGraphEditorEvents graphEvents;
-			graphEvents.OnSelectionChanged.BindRaw(this, &ParalogueEncounterEditorToolkit::OnGraphSelectionChanged);
+			graphEvents.OnSelectionChanged.BindRaw(this, &PlogEdEncounterEditorToolkit::OnGraphSelectionChanged);
 
 			workingGraphSlateDisplay =
 				SNew(SGraphEditor)
@@ -137,14 +137,14 @@ void ParalogueEncounterEditorToolkit::RegisterTabSpawners(const TSharedRef<class
 		.SetGroup(WorkspaceMenuCategory.ToSharedRef());
 }
 
-void ParalogueEncounterEditorToolkit::UnregisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
+void PlogEdEncounterEditorToolkit::UnregisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
 {
 	FAssetEditorToolkit::UnregisterTabSpawners(InTabManager);
 	InTabManager->UnregisterTabSpawner("ParalogueEncounterPDFTab");
 	InTabManager->UnregisterTabSpawner("ParalogueEncounterDetailsTab");
 }
 
-void ParalogueEncounterEditorToolkit::OnClose()
+void PlogEdEncounterEditorToolkit::OnClose()
 {
 	UpdateEncounterAssetFromGraph(); //TODO does unreal automatically ask if you want to save when you close a tab? I do not think so...
 	//uiDialogueGraph->RemoveOnGraphChangedHandler(graphChangeListenerHandler);
@@ -152,13 +152,13 @@ void ParalogueEncounterEditorToolkit::OnClose()
 	FAssetEditorToolkit::OnClose();
 }
 
-void ParalogueEncounterEditorToolkit::OnWorkingAssetPreSave() {
+void PlogEdEncounterEditorToolkit::OnWorkingAssetPreSave() {
 	
 	UpdateEncounterAssetFromGraph();
 	//just gonna put this here for now, not sure if theres a better place
 	BuildIngameEncounterFromGraph();
 }
-//void ParalogueEncounterEditorToolkit::OnGraphChanged(const FEdGraphEditAction& editAction)
+//void PlogEdEncounterEditorToolkit::OnGraphChanged(const FEdGraphEditAction& editAction)
 //{
 //	UE_LOG(ParalogueEditor, Log, TEXT("OnGraphChanged triggered"));
 //
@@ -171,7 +171,7 @@ void ParalogueEncounterEditorToolkit::OnWorkingAssetPreSave() {
 //	BuildIngameEncounterFromGraph();
 //}
 
-void ParalogueEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated(const FPropertyChangedEvent& event)
+void PlogEdEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated(const FPropertyChangedEvent& event)
 {
 	if (workingGraphSlateDisplay != nullptr) 
 	{
@@ -185,24 +185,24 @@ void ParalogueEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated(const F
 	}
 }
 
-FText ParalogueEncounterEditorToolkit::GetDescription() const
+FText PlogEdEncounterEditorToolkit::GetDescription() const
 {
 	return workingEncounterAsset->Description;
 }
 
-void ParalogueEncounterEditorToolkit::SetDescription(FText newDescription) const
+void PlogEdEncounterEditorToolkit::SetDescription(FText newDescription) const
 {
 	workingEncounterAsset->Description = newDescription;
 }
 
-void ParalogueEncounterEditorToolkit::SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView)
+void PlogEdEncounterEditorToolkit::SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView)
 {
 	selectedNodeDetailsView = detailsView;
 	//add function OnNodeDetailsViewPropertiesUpdated as delegate, so that whenever its registered as updated by slate, our side can update too
-	selectedNodeDetailsView->OnFinishedChangingProperties().AddRaw(this, &ParalogueEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated);
+	selectedNodeDetailsView->OnFinishedChangingProperties().AddRaw(this, &PlogEdEncounterEditorToolkit::OnNodeDetailsViewPropertiesUpdated);
 }
 
-UPlogEdBaseEncounterGraphNode* ParalogueEncounterEditorToolkit::GetSelectedNode(const FGraphPanelSelectionSet& selection)
+UPlogEdBaseEncounterGraphNode* PlogEdEncounterEditorToolkit::GetSelectedNode(const FGraphPanelSelectionSet& selection)
 {
 	//todo: theoretically according to Kirby video, you can (probably) set multiple objects and it will let you edit the common set of properties
 // selection is a group of UObjects, find the first PlogEdSegmentGraphNode if any
@@ -218,7 +218,7 @@ UPlogEdBaseEncounterGraphNode* ParalogueEncounterEditorToolkit::GetSelectedNode(
 	return nullptr;
 }
 
-void ParalogueEncounterEditorToolkit::OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection)
+void PlogEdEncounterEditorToolkit::OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection)
 {
 	//todo: theoretically according to Kirby video, you can (probably) set multiple objects and it will let you edit the common set of properties
 	// selection is a group of UObjects, find the first PlogEdSegmentGraphNode if any
@@ -235,7 +235,7 @@ void ParalogueEncounterEditorToolkit::OnGraphSelectionChanged(const FGraphPanelS
 }
 
 
-void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
+void PlogEdEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 {
 	UE_LOG(ParalogueEditor, Log, TEXT("Attempting build of encounter"));
 
@@ -322,7 +322,7 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 	UE_LOG(ParalogueEditor, Log, TEXT("Finished build of encounter"));
 }
 
-void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
+void PlogEdEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 {
 	if (workingEncounterAsset->GetGraphData() == nullptr)
 	{
@@ -426,7 +426,7 @@ void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
 
 //the way this would be used is basically like compiling the encounter like code. This sets up the data that is actually used when the game runs 
 // whenever saving or trying to test, make sure this is what is updating the encounter
-void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
+void PlogEdEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 {
 	if (workingEncounterAsset == nullptr || uiDialogueGraph == nullptr)
 	{
@@ -487,7 +487,7 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 	}
 }
 
-UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphNode(UPlogEdBaseEncounterGraphNode* node)
+UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode(UPlogEdBaseEncounterGraphNode* node)
 {
 	//Don't want duplicate segments, so just make sure there isn't already one that we can just grab instead
 	UEncounterSegment* thisEncounterSegment = node->GetSegmentTempData();
@@ -618,7 +618,7 @@ UEncounterSegment* ParalogueEncounterEditorToolkit::CreateOrFindSegmentForGraphN
 	return thisEncounterSegment;
 }
 
-void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray<TPair<FString, int>>* destinationArray)
+void PlogEdEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray<TPair<FString, int>>* destinationArray)
 {
 	//first parse lines
 	TArray<FString> textAndFaceData;
@@ -643,7 +643,7 @@ void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray
 	}
 }
 
-void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination)
+void PlogEdEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination)
 {
 	//first split lines, leaving the face with it
 	TArray<FString> textAndFaceData;
@@ -671,7 +671,7 @@ void ParalogueEncounterEditorToolkit::ParseSegmentText(FText segmentText, TArray
 }
 
 
-void ParalogueEncounterEditorToolkit::ParseSegmentText(TArray<FText> segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination)
+void PlogEdEncounterEditorToolkit::ParseSegmentText(TArray<FText> segmentText, TArray<FString>* dialogueTextDestination, TArray<int>* dialogueFacesDestination)
 {
 
 	//then separate the faces from the lines
@@ -695,23 +695,23 @@ void ParalogueEncounterEditorToolkit::ParseSegmentText(TArray<FText> segmentText
 
 
 
-//float ParalogueEncounterEditorToolkit::GetMean() const
+//float PlogEdEncounterEditorToolkit::GetMean() const
 //{
 //	return 1.0f;// ParalogueEncounter->Mean;
 //}
 //
-//float ParalogueEncounterEditorToolkit::GetStandardDeviation() const
+//float PlogEdEncounterEditorToolkit::GetStandardDeviation() const
 //{
 //	return 2.0f;// ParalogueEncounter->StandardDeviation;
 //}
 //
-//void ParalogueEncounterEditorToolkit::SetMean(float Mean)
+//void PlogEdEncounterEditorToolkit::SetMean(float Mean)
 //{
 //	ParalogueEncounter->Modify();
 //	//ParalogueEncounter->Mean = Mean;
 //}
 //
-//void ParalogueEncounterEditorToolkit::SetStandardDeviation(float StandardDeviation)
+//void PlogEdEncounterEditorToolkit::SetStandardDeviation(float StandardDeviation)
 //{
 //	ParalogueEncounter->Modify();
 //	//ParalogueEncounter->StandardDeviation = StandardDeviation;

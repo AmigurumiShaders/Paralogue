@@ -8,7 +8,7 @@
 /**
  * 
  */
-class PARALOGUEEDITOR_API FParalogueEncounterAssetTypeActions : public FAssetTypeActions_Base
+class PARALOGUEEDITOR_API FPlogEdEncounterAssetTypeActions : public FAssetTypeActions_Base
 {
 public:
 	UClass* GetSupportedClass() const override;

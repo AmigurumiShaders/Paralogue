@@ -1,16 +1,16 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ParalogueEditor.h"
+#include "PlogEdParalogueEditor.h"
 
 #include "Styling/SlateStyleRegistry.h"
 #include "Interfaces/IPluginManager.h"
 
-#define LOCTEXT_NAMESPACE "FParalogueEditorModule"
+#define LOCTEXT_NAMESPACE "FPlogEdParalogueEditorModule"
 
-void FParalogueEditorModule::StartupModule()
+void FPlogEdParalogueEditorModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	ParalogueEncounterAssetTypeActions = MakeShared<FParalogueEncounterAssetTypeActions>();
+	ParalogueEncounterAssetTypeActions = MakeShared<FPlogEdEncounterAssetTypeActions>();
 	FAssetToolsModule::GetModule().Get().RegisterAssetTypeActions(ParalogueEncounterAssetTypeActions.ToSharedRef());
 
 	//set up slate styleset
@@ -35,7 +35,7 @@ void FParalogueEditorModule::StartupModule()
 
 }
 
-void FParalogueEditorModule::ShutdownModule()
+void FPlogEdParalogueEditorModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -50,4 +50,4 @@ void FParalogueEditorModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FParalogueEditorModule, ParalogueEditor)
+IMPLEMENT_MODULE(FPlogEdParalogueEditorModule, ParalogueEditor)
