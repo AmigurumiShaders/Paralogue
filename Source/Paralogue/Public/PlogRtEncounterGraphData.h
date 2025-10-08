@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 //#include "ParalogueEncounter.h"
-#include "NodeEncounterSegmentData.h"
-#include "ParalogueEncounterGraphData.generated.h"
+#include "PlogRtEncounterSegmentNodeData.h"
+#include "PlogRtEncounterGraphData.generated.h"
 
 //i really really really would like a better name for these to distinguish them from the types in the editor module but idk what
 
@@ -64,7 +64,7 @@ public:
 //	FVector2D Position;
 //
 //	UPROPERTY()
-//	UNodeEncounterSegmentData* NodeSegmentData = nullptr;
+//	UPlogRtEncounterSegmentNodeData* NodeSegmentData = nullptr;
 //	
 //};
 

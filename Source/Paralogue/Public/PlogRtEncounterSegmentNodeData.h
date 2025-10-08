@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 //#include "ParalogueEncounter.h"
 
-#include "NodeEncounterSegmentData.generated.h"
+#include "PlogRtEncounterSegmentNodeData.generated.h"
 
 /// <summary>
 /// Base class for storing the data that the user enters into each node

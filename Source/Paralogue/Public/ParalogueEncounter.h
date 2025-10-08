@@ -9,7 +9,7 @@
 
 #include "Containers/Map.h"
 
-#include "ParalogueEncounterGraphData.h"
+#include "PlogRtEncounterGraphData.h"
 
 #include <functional>
 #include "ParalogueEncounter.generated.h"
@@ -109,7 +109,7 @@ public:
 
 };
 
-	//class UParalogueEncounterEdGraphData; //forward delcaration, because we need to be able to use UEncounterSegment in UNodeEncounterSegmentData, but without creating a circular dependency
+	//class UParalogueEncounterEdGraphData; //forward delcaration, because we need to be able to use UEncounterSegment in UPlogRtEncounterSegmentNodeData, but without creating a circular dependency
 UCLASS(BlueprintType, Blueprintable)
 class PARALOGUE_API UParalogueEncounter : public UObject
 {

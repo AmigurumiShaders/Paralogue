@@ -6,7 +6,7 @@
 #include "SGraphPanel.h"
 #include "ParalogueEncounter.h"
 
-#include "ParalogueEncounterGraphData.h"
+#include "PlogRtEncounterGraphData.h"
 #include "Toolkits/AssetEditorToolkit.h"
 #include "PlogEdSegmentGraphNode.h"
 #include "PlogEdBranchGraphNode.h"

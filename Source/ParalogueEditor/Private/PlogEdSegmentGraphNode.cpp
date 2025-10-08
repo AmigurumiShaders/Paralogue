@@ -4,7 +4,7 @@
 #include "PlogEdSegmentGraphNode.h"
 #include "Framework/Commands/UIAction.h"
 #include "ToolMenu.h"
-#include "NodeEncounterSegmentData.h"
+#include "PlogRtEncounterSegmentNodeData.h"
 
 DEFINE_LOG_CATEGORY(ParalogueEditorNodes);
 

@@ -11,7 +11,7 @@
 #include "Kismet2/KismetEditorUtilities.h" //why does this not require the full path but the above one does? i am questioning this information more...
 #include "PlogEdGraphSchema.h"
 
-#include "NodeEncounterSegmentData.h"
+#include "PlogRtEncounterSegmentNodeData.h"
 
 DEFINE_LOG_CATEGORY(ParalogueEditor);
 

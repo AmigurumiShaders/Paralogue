@@ -4,7 +4,7 @@
 #include "ParalogueEncounter.h"
 #include "UObject/ObjectSaveContext.h"
 
-#include "ParalogueEncounterGraphData.h"
+#include "PlogRtEncounterGraphData.h"
 #include "Engine/GameInstance.h"
 
 DEFINE_LOG_CATEGORY(ParalogueRuntime);

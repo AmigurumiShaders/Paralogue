@@ -2,7 +2,7 @@
 
 
 #include "PlogEdGraphSchema.h"
-#include "NodeEncounterSegmentData.h"
+#include "PlogRtEncounterSegmentNodeData.h"
 #include "PlogEdSegmentGraphNode.h"
 #include "PlogEdBranchGraphNode.h"
 
