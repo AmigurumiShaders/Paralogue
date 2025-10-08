@@ -8,7 +8,7 @@
 //#include "ParalogueEncounter.h"
 #include "PlogEdEncounterGraphNode.h"
 
-#include "ParalogueSegmentGraphNode.generated.h"
+#include "PlogEdSegmentGraphNode.generated.h"
 
 
 DECLARE_LOG_CATEGORY_EXTERN(ParalogueEditorNodes, Log, All);

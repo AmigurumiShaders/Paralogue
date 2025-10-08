@@ -3,13 +3,13 @@
 
 #include "ParalogueEncounterEditorToolkit.h"
 #include "Widgets/Docking/SDockTab.h"
-#include "SParalogueEncounterWidget.h"
+#include "SPlogEdEncounterWidget.h"
 #include "Modules/ModuleManager.h"
 
 #include "GraphEditor.h"
 #include "Editor/UnrealEd/Public/Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h" //why does this not require the full path but the above one does? i am questioning this information more...
-#include "ParalogueGraphSchema.h"
+#include "PlogEdGraphSchema.h"
 
 #include "NodeEncounterSegmentData.h"
 
@@ -25,7 +25,7 @@ void ParalogueEncounterEditorToolkit::InitEditor(const TArray<UObject*>& InObjec
 		workingEncounterAsset,
 		"Dialogue Graph Editor",
 		UEdGraph::StaticClass(),
-		UParalogueGraphSchema::StaticClass()
+		UPlogEdGraphSchema::StaticClass()
 	);
 
 	const TSharedRef<FTabManager::FLayout> Layout = FTabManager::NewLayout("ParalogueEncounterEditorLayout")
@@ -205,7 +205,7 @@ void ParalogueEncounterEditorToolkit::SetSelectedNodeDetailView(TSharedPtr<class
 UPlogEdBaseEncounterGraphNode* ParalogueEncounterEditorToolkit::GetSelectedNode(const FGraphPanelSelectionSet& selection)
 {
 	//todo: theoretically according to Kirby video, you can (probably) set multiple objects and it will let you edit the common set of properties
-// selection is a group of UObjects, find the first ParalogueSegmentGraphNode if any
+// selection is a group of UObjects, find the first PlogEdSegmentGraphNode if any
 	for (UObject* obj : selection)
 	{
 		UPlogEdBaseEncounterGraphNode* node = Cast<UPlogEdBaseEncounterGraphNode>(obj);
@@ -221,7 +221,7 @@ UPlogEdBaseEncounterGraphNode* ParalogueEncounterEditorToolkit::GetSelectedNode(
 void ParalogueEncounterEditorToolkit::OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection)
 {
 	//todo: theoretically according to Kirby video, you can (probably) set multiple objects and it will let you edit the common set of properties
-	// selection is a group of UObjects, find the first ParalogueSegmentGraphNode if any
+	// selection is a group of UObjects, find the first PlogEdSegmentGraphNode if any
 	UPlogEdBaseEncounterGraphNode* selectedNode = GetSelectedNode(selection);
 	if (selectedNode != nullptr) 
 	{
@@ -237,8 +237,12 @@ void ParalogueEncounterEditorToolkit::OnGraphSelectionChanged(const FGraphPanelS
 
 void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 {
+	UE_LOG(ParalogueEditor, Log, TEXT("Attempting build of encounter"));
+
 	if (workingEncounterAsset == nullptr || uiDialogueGraph == nullptr)
 	{
+		UE_LOG(ParalogueEditor, Error, TEXT("Encounter build failed - working asset or dialogue graph not found"));
+
 		return;
 	}
 
@@ -314,6 +318,8 @@ void ParalogueEncounterEditorToolkit::UpdateEncounterAssetFromGraph()
 		pin1->Connections.Add(pin2);
 	}
 
+
+	UE_LOG(ParalogueEditor, Log, TEXT("Finished build of encounter"));
 }
 
 void ParalogueEncounterEditorToolkit::UpdateGraphFromEncounterAsset()
@@ -474,7 +480,7 @@ void ParalogueEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 	//clear the temporary data from graph nodes
 	for (int i = 0; i < graphSegmentNodes.Num(); i++)
 	{
-		//UParalogueSegmentGraphNode* thisNode = graphSegmentNodes[i];
+		//UPlogEdSegmentGraphNode* thisNode = graphSegmentNodes[i];
 
 		graphSegmentNodes[i]->SetSegmentTempData(nullptr);
 

@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ParalogueGraphSchema.h"
+#include "PlogEdGraphSchema.h"
 #include "NodeEncounterSegmentData.h"
-#include "ParalogueSegmentGraphNode.h"
+#include "PlogEdSegmentGraphNode.h"
 #include "PlogEdBranchGraphNode.h"
 
 
-void UParalogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& contextMenuBuilder) const
+void UPlogEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& contextMenuBuilder) const
 {
 	// define the list of actions for the context menu
 	TSharedPtr<FNewNodeAction> newSegmentNodeAction(
@@ -35,7 +35,7 @@ void UParalogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& con
 	contextMenuBuilder.AddAction(newBranchNodeAction);
 }
 
-const FPinConnectionResponse UParalogueGraphSchema::CanCreateConnection(const UEdGraphPin* a, const UEdGraphPin* b) const
+const FPinConnectionResponse UPlogEdGraphSchema::CanCreateConnection(const UEdGraphPin* a, const UEdGraphPin* b) const
 {
 	if (a == nullptr || b == nullptr)
 	{

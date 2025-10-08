@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 //#include "EdGraph/EdGraph.h" //idk why video tutorial uses this but unreal generates this code with the below include instead. Whats the difference? doesnt matter enough to figure out right now...
 #include "EdGraph/EdGraphSchema.h"
-#include "ParalogueGraphSchema.generated.h"
+#include "PlogEdGraphSchema.generated.h"
 
 /**
  * graph schemas define behaviors/logic and things such as if two nodes are allowed to be connected
  */
 UCLASS()
-class PARALOGUEEDITOR_API UParalogueGraphSchema : public UEdGraphSchema
+class PARALOGUEEDITOR_API UPlogEdGraphSchema : public UEdGraphSchema
 {
 	GENERATED_BODY()
 	

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ParalogueSegmentGraphNode.h"
+#include "PlogEdSegmentGraphNode.h"
 #include "Framework/Commands/UIAction.h"
 #include "ToolMenu.h"
 #include "NodeEncounterSegmentData.h"

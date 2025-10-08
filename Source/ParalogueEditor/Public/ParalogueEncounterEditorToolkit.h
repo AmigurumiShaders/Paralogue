@@ -8,7 +8,7 @@
 
 #include "ParalogueEncounterGraphData.h"
 #include "Toolkits/AssetEditorToolkit.h"
-#include "ParalogueSegmentGraphNode.h"
+#include "PlogEdSegmentGraphNode.h"
 #include "PlogEdBranchGraphNode.h"
 
 

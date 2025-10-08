@@ -12,10 +12,10 @@ DECLARE_DELEGATE_OneParam(FOnDescriptionChanged, FText /*NewDescription*/)
 /**
  * 
  */
-class PARALOGUEEDITOR_API SParalogueEncounterWidget : public SLeafWidget
+class PARALOGUEEDITOR_API SPlogEdEncounterWidget : public SLeafWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SParalogueEncounterWidget) //slate declarative macros
+	SLATE_BEGIN_ARGS(SPlogEdEncounterWidget) //slate declarative macros
 		// these (appear to) be what defines InArgs in the Construct function below
 		: _Description(FText::FromString(TEXT("some text default"))) //was getting errors about not being able to access private ftext member, needed to make sure this was being properly defined as an ftext apparently
 		{}
