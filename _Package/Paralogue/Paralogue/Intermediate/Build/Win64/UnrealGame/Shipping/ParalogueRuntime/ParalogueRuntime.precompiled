@@ -1,0 +1,9 @@
+{
+	"OutputFiles": [
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\ParalogueRuntime\\Module.ParalogueRuntime.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\ParalogueRuntime\\ParalogueEncounter.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\ParalogueRuntime\\ParalogueGameInstanceSubsystem.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\ParalogueRuntime\\ParalogueRuntime.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\ParalogueRuntime\\PlogRtEncounterGraphData.cpp.obj"
+	]
+}

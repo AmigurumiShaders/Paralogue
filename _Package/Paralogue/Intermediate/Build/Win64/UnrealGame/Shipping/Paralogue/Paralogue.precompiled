@@ -1,9 +1,0 @@
-{
-	"OutputFiles": [
-		"..\\..\\..\\x64\\UnrealGame\\Shipping\\Paralogue\\Module.Paralogue.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Shipping\\Paralogue\\Paralogue.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Shipping\\Paralogue\\ParalogueEncounter.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Shipping\\Paralogue\\ParalogueEncounterGraphData.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Shipping\\Paralogue\\ParalogueGameInstanceSubsystem.cpp.obj"
-	]
-}
