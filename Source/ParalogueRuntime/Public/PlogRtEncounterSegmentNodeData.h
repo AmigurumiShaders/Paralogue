@@ -9,7 +9,7 @@
 /// Base class for storing the data that the user enters into each node
 /// </summary>
 UCLASS()
-class PARALOGUE_API UPlogRtNodeUserData : public UObject {
+class PARALOGUERUNTIME_API UPlogRtNodeUserData : public UObject {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, Category = "Meta")
@@ -27,7 +27,7 @@ public:
 /// Data for the main encounter segments
 /// </summary>
 UCLASS()
-class PARALOGUE_API UPlogRtEncounterSegmentNodeUserData : public UPlogRtNodeUserData {
+class PARALOGUERUNTIME_API UPlogRtEncounterSegmentNodeUserData : public UPlogRtNodeUserData {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, Category = "Dialogue Content")//meta=(MultiLine=true) add this?
@@ -50,7 +50,7 @@ public:
 /// Simply the name of the route flag to check to decide on the branch
 /// </summary>
 UCLASS()
-class PARALOGUE_API UPlogRtEncounterBranchNodeUserData : public UPlogRtNodeUserData {
+class PARALOGUERUNTIME_API UPlogRtEncounterBranchNodeUserData : public UPlogRtNodeUserData {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, Category = "Route Flags")

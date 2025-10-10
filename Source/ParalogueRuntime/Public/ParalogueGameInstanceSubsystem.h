@@ -22,7 +22,7 @@ struct FPlayerResponseData {
  * 
  */
 UCLASS()
-class PARALOGUE_API UParalogueGameInstanceSubsystem : public UGameInstanceSubsystem
+class PARALOGUERUNTIME_API UParalogueGameInstanceSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

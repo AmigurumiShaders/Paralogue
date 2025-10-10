@@ -49,7 +49,7 @@ DECLARE_LOG_CATEGORY_EXTERN(ParalogueRuntime, Log, All);
 /// If IsBranch == true, the route traversal should ignore all data unrelated to branching
 /// </summary>
 UCLASS()
-class PARALOGUE_API UEncounterSegment : public UObject
+class PARALOGUERUNTIME_API UEncounterSegment : public UObject
 { 
 	GENERATED_BODY()
 	//could consider initializers called things like "init as branch" or something to simplify the code for building the encounters on editor side
@@ -111,7 +111,7 @@ public:
 
 	//class UParalogueEncounterEdGraphData; //forward delcaration, because we need to be able to use UEncounterSegment in UPlogRtEncounterSegmentNodeData, but without creating a circular dependency
 UCLASS(BlueprintType, Blueprintable)
-class PARALOGUE_API UParalogueEncounter : public UObject
+class PARALOGUERUNTIME_API UParalogueEncounter : public UObject
 {
 	GENERATED_BODY()
 	

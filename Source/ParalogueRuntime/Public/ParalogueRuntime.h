@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FParalogueModule : public IModuleInterface
+class FParalogueRuntimeModule : public IModuleInterface
 {
 public:
 

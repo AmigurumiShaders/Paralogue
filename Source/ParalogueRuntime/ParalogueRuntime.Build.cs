@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Paralogue : ModuleRules
+public class ParalogueRuntime : ModuleRules
 {
-	public Paralogue(ReadOnlyTargetRules Target) : base(Target)
+	public ParalogueRuntime(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -18,7 +18,7 @@ public class Paralogue : ModuleRules
 		PrivateIncludePaths.AddRange(
 			new string[] {
 				// ... add other private include paths required here ...
-				"Runtime/Paralogue/Private"
+				"Runtime/ParalogueRuntime/Private"
             }
 			);
 			

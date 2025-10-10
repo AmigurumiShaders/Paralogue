@@ -16,7 +16,7 @@
  * 
  */
 UCLASS()
-class PARALOGUE_API UPlogRtEditorSavedPinData : public UObject
+class PARALOGUERUNTIME_API UPlogRtEditorSavedPinData : public UObject
 {
 	GENERATED_BODY()
 public:
@@ -30,7 +30,7 @@ public:
 
 };
 UCLASS()
-class PARALOGUE_API UPlogRtEditorSavedNodeData : public UObject
+class PARALOGUERUNTIME_API UPlogRtEditorSavedNodeData : public UObject
 {
 	GENERATED_BODY()
 
@@ -69,7 +69,7 @@ public:
 //};
 
 UCLASS()
-class PARALOGUE_API UPlogRtEditorSavedGraphData : public UObject
+class PARALOGUERUNTIME_API UPlogRtEditorSavedGraphData : public UObject
 {
 	GENERATED_BODY()
 public:
