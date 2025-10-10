@@ -433,8 +433,11 @@ void PlogEdEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 		return;
 	}
 
-	//clear array in working asset
+	//clear arrays in working asset
 	workingEncounterAsset->Segments.Empty();
+	workingEncounterAsset->FlagsSet.Empty();
+	workingEncounterAsset->FlagsChecked.Empty();
+
 
 	//array of graph segment nodes (like literally the ones in the UI graph)
 	TArray<UPlogEdBaseEncounterGraphNode*> graphSegmentNodes;
@@ -512,6 +515,9 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 	workingEncounterAsset->Segments.Add(thisEncounterSegment);
 
 
+
+
+
 	int pinCount = node->Pins.Num();
 	int thisOutPinIndex = 0; //start at -1 so that we can just simply increment, and the first index will start at 0
 	// wait why not just move increment to end of if statement, so this can be zero like it normally would
@@ -526,7 +532,6 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 	if (segmentNodeUserData->IsA<UPlogRtEncounterSegmentNodeUserData>())
 	{
 		userDataAsSegment = Cast<UPlogRtEncounterSegmentNodeUserData>(segmentNodeUserData);
-
 		if (userDataAsSegment->CharacterLines.IsEmpty())
 		{
 			//if there is no text to add, add placeholder text instead of leaving blank (prevents anything from breaking from trying to run an empty segment, and also tells the user rather than having this just silently fail)
@@ -545,6 +550,11 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 
 		thisEncounterSegment->FlagToSet = userDataAsSegment->FlagToSet;
 		thisEncounterSegment->FlagValue = userDataAsSegment->FlagValue;
+		//also save flag to list for user
+		if (thisEncounterSegment->FlagToSet != "")
+		{
+			workingEncounterAsset->FlagsSet.Add(thisEncounterSegment->FlagToSet);
+		}
 
 		for (int j = 0; j < pinCount; j++) //This was after the if statement before, but until a different node type that it would make sense for it is added, I only want this loop to run for the segment nodes (not the branch nodes)
 		{
@@ -613,6 +623,17 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 			CreateOrFindSegmentForGraphNode(Cast<UPlogEdBaseEncounterGraphNode>(trueOutPin->LinkedTo[0]->GetOwningNode())),
 			CreateOrFindSegmentForGraphNode(Cast<UPlogEdBaseEncounterGraphNode>(falseOutPin->LinkedTo[0]->GetOwningNode()))
 		);
+
+		//also save flag to list for user
+		if (userDataAsBranch->FlagToCheck != "")
+		{
+			workingEncounterAsset->FlagsChecked.Add(userDataAsBranch->FlagToCheck);
+
+		}
+		else
+		{
+			UE_LOG(ParalogueEditor, Warning, TEXT("Branch node is missing flag to check!!!"));
+		}
 	}
 	node->SetSegmentTempData(thisEncounterSegment);
 	return thisEncounterSegment;

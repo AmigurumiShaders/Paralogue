@@ -137,13 +137,15 @@ public:
 	//all this because apparently the other way doesnt work with connectins...
 	void SetPreSaveListener(std::function<void()> onPreSaveListener) { _onPreSaveListener = onPreSaveListener; }
 	virtual void PreSave(FObjectPreSaveContext saveContext) override;
-
+	/*void ClearContentsDisplay();*/
 
 
 
 	//void ClearEncounter(); //clears the segments, might be useful for saving the asset...
 	void SetGraphData(UPlogRtEditorSavedGraphData* data) { graphData = data; }
 	UPlogRtEditorSavedGraphData* GetGraphData() { return graphData; }
+
+
 	UPROPERTY(BlueprintReadOnly, Category = "Editor")
 	UPlogRtEditorSavedGraphData* graphData = nullptr;
 	
@@ -152,10 +154,20 @@ public:
 	/*Detailed description of this encounter, such as for the situation it is intended for. Like a code comment*/
 	UPROPERTY(EditAnywhere, Category = "Meta")
 	FText Description;
+
+
 	//[todo: probably should use props rather than public variables for that array]
-	UPROPERTY(VisibleAnywhere, Category = "Content")
+	UPROPERTY()//VisibleAnywhere, Category = "Content")
 	TArray<UEncounterSegment*> Segments; 
-	UPROPERTY(VisibleAnywhere, Category = "AAAAAAAAA")
+	/*List of all route flags that may be set during this encounter*/
+	UPROPERTY(VisibleAnywhere, Category = "Flags")
+	TArray<FName> FlagsSet;
+	/*List of all route flags that may be checked during this encounter*/
+	UPROPERTY(VisibleAnywhere, Category = "Flags")
+	TArray<FName> FlagsChecked;
+
+
+	UPROPERTY()//VisibleAnywhere, Category = "AAAAAAAAA")
 	UEncounterSegment* startingSegment; //not necessary?
 
 
@@ -185,6 +197,8 @@ public:
 	void ProcessPlayerResponse(int playerSelected);
 
 private:
+
+
 	//advances the current dialogue display by one page
 	UFUNCTION(BlueprintCallable, Category = "AAAAAAAAA")
 	void PageForward(); 

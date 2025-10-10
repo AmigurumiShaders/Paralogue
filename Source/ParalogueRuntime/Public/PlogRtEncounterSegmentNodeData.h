@@ -40,7 +40,7 @@ public:
 		TArray<FText> PlayerResponseOptions;
 
 	
-	UPROPERTY(EditAnywhere, Category = "Route Flags")
+	UPROPERTY(EditAnywhere, Category = "Route Flags", meta = (FlagToSet = ""))
 	FName FlagToSet;
 	UPROPERTY(EditAnywhere, Category = "Route Flags")
 	bool FlagValue;
@@ -53,6 +53,6 @@ UCLASS()
 class PARALOGUERUNTIME_API UPlogRtEncounterBranchNodeUserData : public UPlogRtNodeUserData {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, Category = "Route Flags")
+	UPROPERTY(EditAnywhere, Category = "Route Flags", meta = (FlagToCheck = ""))
 	FName FlagToCheck;
 };

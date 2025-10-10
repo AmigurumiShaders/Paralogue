@@ -64,9 +64,13 @@ UPlogEdSegmentGraphNode::UPlogEdSegmentGraphNode()
 
 FText UPlogEdSegmentGraphNode::GetNodeTitle(ENodeTitleType::Type titleType) const
 {
+	//TODO This node title building is getting bloated and now theres a cast and everything - it would be better to cache this as suggested in some other unreal files. Can do when saving 
+	UPlogRtEncounterSegmentNodeUserData* segData = Cast<UPlogRtEncounterSegmentNodeUserData>(segmentNodeUserData);
 	return FText::FromString(
-		LabelIfStart() + 
-		segmentNodeUserData->Title.ToString());
+		LabelIfStart() +
+		segmentNodeUserData->Title.ToString() +
+		TEXT(" [") + segData->FlagToSet.ToString() + (segData->FlagValue ? TEXT(":true]") : TEXT(":false]")) //all this gross mess to cram t/f display into one line bc im going to rip this out anyway
+	);
 	//if (segmentNodeUserData->IsValidLowLevel()) //segmentNodeUserData!=nullptr)//
 	//{
 	//	return segmentNodeUserData->Title;

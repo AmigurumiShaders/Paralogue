@@ -25,6 +25,7 @@ void UParalogueEncounter::PreSave(FObjectPreSaveContext saveContext)
 	}
 }
 
+
 // just commenting this out for now because im sure I'll need it later
 //void UParalogueEncounter::LogAllSegmentData()
 //{
