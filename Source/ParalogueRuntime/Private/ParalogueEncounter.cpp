@@ -73,7 +73,7 @@ void UParalogueEncounter::SetEncounterToStart(AActor* owningActor)
 	// pick that apart right now
 	// 
 	ReachedEncounterEnd = false;
-	DisplayedPlayerOptions.Empty(); //just making sure its clear (can probably remove if transient specifier is working how i think it is
+	PlayerOptionsForSegment.Empty(); //just making sure its clear (can probably remove if transient specifier is working how i think it is
 	//SetUpNewSegment(0);
 	if (Segments.IsEmpty())
 	{
@@ -159,7 +159,17 @@ void UParalogueEncounter::SetUpNewSegment()
 	}
 
 	// set player response options
-	DisplayedPlayerOptions = currentSegment->PlayerOptions;
+	PlayerOptionsForSegment = currentSegment->PlayerOptions;
+	//we only want to ask the player for a response if there is something for them to actually say (which a single blank button is not)
+	BlankSingleOption = (PlayerOptionsForSegment.Num() == 1 && PlayerOptionsForSegment[0].EqualTo(FText().FromString("")));
+	//if (PlayerOptionsForSegment.Num() == 1 && PlayerOptionsForSegment[0].EqualTo(FText().FromString("")))
+	//{
+	//	BlankSingleOption = true; //actually idk if im gonna use this variable lol
+	//	
+	//	//essentially, the easiest way to implement skipping the question honestly seems to be just grabbing the next segment's data and sticking the character lines and things onto it
+	//	//TraverseToNextNonBranch();
+	//	////ooooohhhhh but then we gotta figure out a way to do this recursivelyyyyyyyyyyyy
+	//}
 }
 
 
@@ -187,19 +197,33 @@ void UParalogueEncounter::PageForward()
 		//	UE_LOG(LogTemp, Log, TEXT("Added response: %s"), *currentSegment->PlayerOptionToNextSegment[i].Key.ToString())
 		//}
 
-		if (!DisplayedPlayerOptions.IsEmpty()) 
+		if (!PlayerOptionsForSegment.IsEmpty()) 
 		{
+			//// If there is exactly one option with no text, dont show a blank option, we just want to seamlessly skip straight to the only possible next segment
+			//if (PlayerOptionsForSegment.Num() == 1 && PlayerOptionsForSegment[0].EqualTo(FText().FromString("")))
+			//{
+			//	UE_LOG(ParalogueRuntime, Log, TEXT("\n End of segment with only one blank option for the player - should advance straight to next segment"))
+			//	//ProcessPlayerResponse(0);
+			//	DontAskPlayer = 
+			//}
+			//else
+			//{
+			//
+			//}
+			AwaitingPlayerSelection = true;
 
-			AwaitingPlayerResponse = true;
-			UE_LOG(ParalogueRuntime, Log, TEXT("\n End of segment reached, and response options appear to be available."))
+			UE_LOG(ParalogueRuntime, Log, TEXT("\n End of segment reached, and player response options appear to be available."))
+
 
 		}
 		else
 		{
+			UE_LOG(ParalogueRuntime, Log, TEXT("\n End of segment reached, no response options found. Ending encounter"))
 			ReachedEncounterEnd = true;
 			//TestEncounterEvent();
 			//It's important that we save player response log to persistent instance here in c++ rather than leave it up to the user to remember to do this.
-			//We want a *complete* log of all responses the player has ever input during the game, doing it for them dramatically simplifies their work. In theory anyway. Point and laugh at me if this turns out to be useless. 
+			//We want a *complete* log of all responses the player has ever input during the game, doing it for them dramatically simplifies their work. In theory anyway. 
+			// Point and laugh at me if this turns out to be useless. 
 			
 			UGameplayStatics::GetGameInstance(worldContextObj)->
 				GetSubsystem<UParalogueGameInstanceSubsystem>()->
@@ -224,13 +248,13 @@ void UParalogueEncounter::ProcessPlayerResponse(int playerSelectedIdx)
 	//if(currentSegment->PlayerOptionToNextSegment[playerSelectedIdx].Value)
 
 	playerResponseLog.Add(playerSelectedIdx);
-	AwaitingPlayerResponse = false;
+	AwaitingPlayerSelection = false;
 	currentSegment = currentSegment->NextSegmentSelector[playerSelectedIdx];
 	//currentSegment = currentSegment->PlayerOptionToNextSegment[playerSelectedIdx].Value;
 	//currentPageIndex = 0;
 	SetUpNewSegment();
 
-	UE_LOG(ParalogueRuntime, Log, TEXT("\n Emptied displayed response array"))
+	UE_LOG(ParalogueRuntime, Log, TEXT("\n Emptied displayed response array")) //wait but thats not what happened, it actually just replaced it?
 }
 
 

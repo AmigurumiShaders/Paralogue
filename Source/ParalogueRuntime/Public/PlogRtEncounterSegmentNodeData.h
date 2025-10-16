@@ -34,7 +34,7 @@ public:
 		TArray<int> CharacterFaces;
 	
 	/*Linear segment of dialogue from the character, with each array element being one page of text*/
-	UPROPERTY(EditAnywhere,meta = (MultiLine = true), Category = "Dialogue Content")//meta=(MultiLine=true) add this?
+	UPROPERTY(EditAnywhere,meta = (MultiLine = true, EditCondition = "!SetAsStartNode"), Category = "Dialogue Content")//meta=(MultiLine=true) add this?
 		TArray<FText> CharacterLines;
 	UPROPERTY(EditAnywhere, Category = "Dialogue Content") //meta=(MultiLine=true) add this?
 		TArray<FText> PlayerResponseOptions;

@@ -183,10 +183,13 @@ public:
 
 	//Options within the current encounter that the player has to respond to the npc
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "AAAAAAAAA")
-	TArray<FText> DisplayedPlayerOptions;
+	TArray<FText> PlayerOptionsForSegment;
 	//Set to true when there are no dialogue pages left, and there are dialogue options available in the segment
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "AAAAAAAAA")
-	bool AwaitingPlayerResponse;
+	bool AwaitingPlayerSelection;
+	//Allowing for skipping single blank player responses
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "AAAAAAAAA")
+	bool BlankSingleOption;
 	//Set to true when the encounter reaches the end of the available dialogue pages with no responses (or otherwise other branches) available in the segment
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "AAAAAAAAA")
 	bool ReachedEncounterEnd = false;
@@ -205,6 +208,7 @@ private:
 
 	// Branch segments do not have any dialogue or options for the player to select, 
 	// so we want to just quietly traverse until the next full segment
+	//could want to call it "next segment with text" or something rather than just non branch lol it would be more explanatory
 	void TraverseToNextNonBranch();
 
 	//Sets up page/response arrays based on what currentSegment is set to (remember to set currentSegment BEFORE calling this)

@@ -519,8 +519,7 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 
 
 	int pinCount = node->Pins.Num();
-	int thisOutPinIndex = 0; //start at -1 so that we can just simply increment, and the first index will start at 0
-	// wait why not just move increment to end of if statement, so this can be zero like it normally would
+	int thisOutPinIndex = 0;
 
 	//clear the array first
 	thisEncounterSegment->NpcLines.Empty();
@@ -536,7 +535,7 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 		{
 			//if there is no text to add, add placeholder text instead of leaving blank (prevents anything from breaking from trying to run an empty segment, and also tells the user rather than having this just silently fail)
 			//thisEncounterSegment->NpcLinesWithFaces.Add(TPair<FString, int>(FString("[Dialogue segment not implemented]"), 0));
-			thisEncounterSegment->NpcLines.Add(FText::FromString("[Dialogue segment not implemented]"));
+			thisEncounterSegment->NpcLines.Add(FText::FromString("[blank text]"));
 			thisEncounterSegment->NpcFaceSelector.Add(0);
 		}
 		else
@@ -563,18 +562,16 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 			if (thisPin->Direction == EEdGraphPinDirection::EGPD_Output)
 			{
 			
-				// a segment with no player options should (iirc) signal the end of the encounter, so why create a placeholder? Unless
-				//thisEncounterSegment->PlayerOptionToNextSegment.Add(TPair<FText, UEncounterSegment*>()); //add a blank/default player option, which will be filled if there are any connections
+				// a segment with no player options should signal the end of the encounter
 
+				//asdasdasdasd
 				if (thisPin->HasAnyConnections()) //if its an output pin with a connection... Nesting the if's like this so that we can accurately skip pins with no connection (assuming we want to allow that...? idk doesnt seem like a big deal rn)
 				{
 					//TArray<UEdGraphPin*> links = thisPin->LinkedTo;
 					UEdGraphPin* linkedPin = thisPin->LinkedTo[0]; //just the first index, because if these output pins are ever linked to more than one thing, something else is more broken than this would be
-					UEdGraphNode* linkedNode = linkedPin->GetOwningNode(); //todo - work out having multiple outputs connected to one input (avoid creating more than one segment for it in that case, etc...)
-					if (UPlogEdBaseEncounterGraphNode* nextNode = Cast<UPlogEdBaseEncounterGraphNode>(linkedNode))  //if its a segment node, link up the player option to the response to that option
+					UEdGraphNode* linkedNode = linkedPin->GetOwningNode(); 
+					if (UPlogEdBaseEncounterGraphNode* nextNode = Cast<UPlogEdBaseEncounterGraphNode>(linkedNode))  //node type validation
 					{ // (right now, all possible graph nodes are things we would want to become segments. This may change in the future...
-
-						//PARSE HERE ? no, silly goose. why would we parse this encounter segment in the loop section reserved for setting up/dealing with the next recursion iteration
 
 						//create the segment for the connected node (this is where the recursion comes in)
 						UEncounterSegment* npcResponse = CreateOrFindSegmentForGraphNode(nextNode);
@@ -602,6 +599,7 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 						}
 					}
 				}
+
 
 				thisOutPinIndex++;
 
