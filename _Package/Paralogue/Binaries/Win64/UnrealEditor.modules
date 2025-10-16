@@ -1,0 +1,8 @@
+{
+	"BuildId": "33043543",
+	"Modules": 
+	{
+		"Paralogue": "UnrealEditor-Paralogue.dll",
+		"ParalogueEditor": "UnrealEditor-ParalogueEditor.dll"
+	}
+}
