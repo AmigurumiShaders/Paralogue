@@ -161,7 +161,8 @@ void UParalogueEncounter::SetUpNewSegment()
 	// set player response options
 	PlayerOptionsForSegment = currentSegment->PlayerOptions;
 	//we only want to ask the player for a response if there is something for them to actually say (which a single blank button is not)
-	BlankSingleOption = (PlayerOptionsForSegment.Num() == 1 && PlayerOptionsForSegment[0].EqualTo(FText().FromString("")));
+	//BlankSingleOption = (PlayerOptionsForSegment.Num() == 1 && PlayerOptionsForSegment[0].EqualTo(FText().FromString("")));
+	BlankSingleOption = (PlayerOptionsForSegment.Num() == 1 && PlayerOptionsForSegment[0].IsEmpty());
 	//if (PlayerOptionsForSegment.Num() == 1 && PlayerOptionsForSegment[0].EqualTo(FText().FromString("")))
 	//{
 	//	BlankSingleOption = true; //actually idk if im gonna use this variable lol
@@ -186,7 +187,14 @@ void UParalogueEncounter::PageForward()
 	if (currentPageIndex < currentTextPages.Num())
 	{
 		currentLine = currentTextPages[currentPageIndex];
-		currentFaceIdx = currentFaceOrder[currentPageIndex];
+		if (currentFaceIdx < currentFaceOrder.Num())
+		{
+			currentFaceIdx = currentFaceOrder[currentPageIndex];
+		}
+		else
+		{
+			UE_LOG(ParalogueRuntime, Warning, TEXT("Current dialogue page index does not map to a valid face index. face was not updated"));
+		}
 	}
 	else
 	{
