@@ -4,7 +4,7 @@
 #include "PlogEdBranchGraphNode.h"
 #include "Framework/Commands/UIAction.h"
 #include "ToolMenu.h"
-#include "NodeEncounterSegmentData.h"
+#include "PlogRtEncounterSegmentNodeData.h"
 
 
 

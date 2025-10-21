@@ -3,6 +3,7 @@
 	"Modules": 
 	{
 		"Paralogue": "UnrealEditor-Paralogue.dll",
-		"ParalogueEditor": "UnrealEditor-ParalogueEditor.dll"
+		"ParalogueEditor": "UnrealEditor-ParalogueEditor.dll",
+		"ParalogueRuntime": "UnrealEditor-ParalogueRuntime.dll"
 	}
 }

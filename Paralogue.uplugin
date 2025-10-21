@@ -16,7 +16,7 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "Paralogue",
+			"Name": "ParalogueRuntime",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
