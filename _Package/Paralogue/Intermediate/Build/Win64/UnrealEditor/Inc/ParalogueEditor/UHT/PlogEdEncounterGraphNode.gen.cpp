@@ -11,9 +11,9 @@ void EmptyLinkFunctionForGeneratedCodePlogEdEncounterGraphNode() {}
 
 // Begin Cross Module References
 ENGINE_API UClass* Z_Construct_UClass_UEdGraphNode();
-PARALOGUE_API UClass* Z_Construct_UClass_UPlogRtNodeUserData_NoRegister();
 PARALOGUEEDITOR_API UClass* Z_Construct_UClass_UPlogEdBaseEncounterGraphNode();
 PARALOGUEEDITOR_API UClass* Z_Construct_UClass_UPlogEdBaseEncounterGraphNode_NoRegister();
+PARALOGUERUNTIME_API UClass* Z_Construct_UClass_UPlogRtNodeUserData_NoRegister();
 UPackage* Z_Construct_UPackage__Script_ParalogueEditor();
 // End Cross Module References
 
