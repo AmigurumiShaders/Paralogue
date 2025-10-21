@@ -20,16 +20,16 @@ void FPlogEdParalogueEditorModule::StartupModule()
 	styleSet->SetContentRoot(contentDir);
 
 	//const TCHAR pngExt = TEXT(".png"); //silly me thought maybe let's make this a variable but for some reason its just not that simple
-	FSlateImageBrush* thumbnailBrush = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("paralogueEncounterAssetIcon"), TEXT(".png")), FVector2D(256.0, 256.0));
-	FSlateImageBrush* iconBrush = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("paralogueEncounterAssetIcon"), TEXT(".png")), FVector2D(256.0, 256.0));
-	//FSlateImageBrush* nodeAddPinIcon = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("amgryFace"), TEXT(".png")), FVector2D(128.0, 128.0));
-	//FSlateImageBrush* nodeDeletePinIcon = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("emojitiredsmallest"), TEXT(".png")), FVector2D(128.0, 128.0));
-	//FSlateImageBrush* nodeDeleteNodeIcon = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("emojifearsmall"), TEXT(".png")), FVector2D(128.0, 128.0));
+	FSlateImageBrush* thumbnailBrush = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("amgry"), TEXT(".png")), FVector2D(128.0, 128.0));
+	FSlateImageBrush* iconBrush = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("emojibruhsmallest"), TEXT(".png")), FVector2D(128.0, 128.0));
+	FSlateImageBrush* nodeAddPinIcon = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("amgryFace"), TEXT(".png")), FVector2D(128.0, 128.0));
+	FSlateImageBrush* nodeDeletePinIcon = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("emojitiredsmallest"), TEXT(".png")), FVector2D(128.0, 128.0));
+	FSlateImageBrush* nodeDeleteNodeIcon = new FSlateImageBrush(styleSet->RootToContentDir(TEXT("emojifearsmall"), TEXT(".png")), FVector2D(128.0, 128.0));
 	styleSet->Set(TEXT("ClassThumbnail.ParalogueEncounter"), thumbnailBrush); // these strings are being referenced by unreal, we dont choose what they are
 	styleSet->Set(TEXT("ClassIcon.ParalogueEncounter"), iconBrush);
-	//styleSet->Set(TEXT("Paralogue.NodeAddPinIcon"), nodeAddPinIcon); // this and the below strings are referenced by this plugin, so we do choose them ourselves
-	//styleSet->Set(TEXT("Paralogue.NodeDeletePinIcon"), nodeDeletePinIcon);
-	//styleSet->Set(TEXT("Paralogue.NodeDeleteNodeIcon"), nodeDeleteNodeIcon);
+	styleSet->Set(TEXT("Paralogue.NodeAddPinIcon"), nodeAddPinIcon); // this and the below strings are referenced by this plugin, so we do choose them ourselves
+	styleSet->Set(TEXT("Paralogue.NodeDeletePinIcon"), nodeDeletePinIcon);
+	styleSet->Set(TEXT("Paralogue.NodeDeleteNodeIcon"), nodeDeleteNodeIcon);
 
 	FSlateStyleRegistry::RegisterSlateStyle(*styleSet);
 

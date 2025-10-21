@@ -41,7 +41,7 @@ public class ParalogueEditor : ModuleRules
 				"Slate",
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
-				"ParalogueRuntime", //make <-THAT module a dependency of THIS one, so that this module can use the stuff defined there (like the custom asset type)
+				"Paralogue", //make <-THAT module a dependency of THIS one, so that this module can use the stuff defined there (like the custom asset type)
                 "UnrealEd", // apparently this is needed for registering the asset type actions. i think Ed is short for Editor?
 				"AssetTools",
                 "PropertyEditor",

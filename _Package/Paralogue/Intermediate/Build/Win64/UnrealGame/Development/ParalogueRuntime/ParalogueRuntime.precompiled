@@ -1,9 +1,0 @@
-{
-	"OutputFiles": [
-		"..\\..\\..\\x64\\UnrealGame\\Development\\ParalogueRuntime\\Module.ParalogueRuntime.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Development\\ParalogueRuntime\\ParalogueEncounter.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Development\\ParalogueRuntime\\ParalogueGameInstanceSubsystem.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Development\\ParalogueRuntime\\ParalogueRuntime.cpp.obj",
-		"..\\..\\..\\x64\\UnrealGame\\Development\\ParalogueRuntime\\PlogRtEncounterGraphData.cpp.obj"
-	]
-}

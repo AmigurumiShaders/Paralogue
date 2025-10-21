@@ -1,0 +1,9 @@
+{
+	"OutputFiles": [
+		"..\\..\\..\\x64\\UnrealGame\\Development\\Paralogue\\Module.Paralogue.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Development\\Paralogue\\Paralogue.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Development\\Paralogue\\ParalogueEncounter.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Development\\Paralogue\\ParalogueEncounterGraphData.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Development\\Paralogue\\ParalogueGameInstanceSubsystem.cpp.obj"
+	]
+}
