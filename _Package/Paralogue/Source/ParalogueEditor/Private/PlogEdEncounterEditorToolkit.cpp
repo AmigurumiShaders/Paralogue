@@ -492,6 +492,8 @@ void PlogEdEncounterEditorToolkit::BuildIngameEncounterFromGraph()
 
 UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode(UPlogEdBaseEncounterGraphNode* node)
 {
+	if (node == nullptr) { return nullptr; }
+
 	//Don't want duplicate segments, so just make sure there isn't already one that we can just grab instead
 	UEncounterSegment* thisEncounterSegment = node->GetSegmentTempData();
 	if (thisEncounterSegment != nullptr)
@@ -616,10 +618,22 @@ UEncounterSegment* PlogEdEncounterEditorToolkit::CreateOrFindSegmentForGraphNode
 		UEdGraphPin* trueOutPin = node->FindPin(TEXT("True"), EEdGraphPinDirection::EGPD_Output); // I dont actually know if findpin is better but eh
 		UEdGraphPin* falseOutPin = node->FindPin(TEXT("False"), EEdGraphPinDirection::EGPD_Output);
 
+		//checks so that the engine doesnt crash if the user happens to save a graph thats missing a branch connection (indexing into an empty array) 
+		//it would be nice for this to be its own function maybe but idk where to put it
+		UEdGraphNode* trueLinkedNode = nullptr;
+		if (trueOutPin->LinkedTo.IsValidIndex(0))
+		{
+			trueLinkedNode = trueOutPin->LinkedTo[0]->GetOwningNode();
+		}
+		UEdGraphNode* falseLinkedNode = nullptr;
+		if (falseOutPin->LinkedTo.IsValidIndex(0))
+		{
+			falseLinkedNode = falseOutPin->LinkedTo[0]->GetOwningNode();
+		}
 		thisEncounterSegment->InitAsBranch(
 			userDataAsBranch->FlagToCheck,
-			CreateOrFindSegmentForGraphNode(Cast<UPlogEdBaseEncounterGraphNode>(trueOutPin->LinkedTo[0]->GetOwningNode())),
-			CreateOrFindSegmentForGraphNode(Cast<UPlogEdBaseEncounterGraphNode>(falseOutPin->LinkedTo[0]->GetOwningNode()))
+			CreateOrFindSegmentForGraphNode(Cast<UPlogEdBaseEncounterGraphNode>(trueLinkedNode)),
+			CreateOrFindSegmentForGraphNode(Cast<UPlogEdBaseEncounterGraphNode>(falseLinkedNode))
 		);
 
 		//also save flag to list for user

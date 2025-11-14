@@ -106,6 +106,14 @@ void UParalogueEncounter::TraverseToNextNonBranch()
 		{
 			currentSegment = currentSegment->NextSegmentForFalse;
 		}
+
+		if (currentSegment == nullptr) //handling the case where a branch node's result segment is not set 
+		{ 
+
+			UE_LOG(ParalogueRuntime, Error, TEXT("Encountered unset branch node path!! Encounter will be ended. "));
+			ReachedEncounterEnd = true;
+			return; 
+		} 
 	}
 }
 
@@ -119,6 +127,9 @@ void UParalogueEncounter::SetUpNewSegment()
 	}
 
 	TraverseToNextNonBranch();
+
+	//have to check current segment AGAIN bc of how branches are built, its possible they wind up with null paths
+	if (currentSegment == nullptr || ReachedEncounterEnd == true) { return; }
 	
 	UGameplayStatics::GetGameInstance(worldContextObj)->
 		GetSubsystem<UParalogueGameInstanceSubsystem>()->

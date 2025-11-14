@@ -30,10 +30,17 @@ int UParalogueGameInstanceSubsystem::GetRouteVariable(FName variableName)
 	}
 }
 
+
+void UParalogueGameInstanceSubsystem::SetRouteFlag(FName flagName, bool flagValue)
+{
+	routeFlags.FindOrAdd(flagName, flagValue);
+}
 bool UParalogueGameInstanceSubsystem::GetRouteFlag(FName flagName)
 {
 	if (routeFlags.Contains(flagName))
 	{
+
+		UE_LOG(ParalogueGameInstanceSubsystem, Log, TEXT("\n Route flag '%s' found with value %s"), *flagName.ToString(), (routeFlags[flagName] ? TEXT("true") : TEXT("false")));
 		return routeFlags[flagName];
 	}
 	else

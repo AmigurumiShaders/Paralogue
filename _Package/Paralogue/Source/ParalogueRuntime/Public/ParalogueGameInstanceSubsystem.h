@@ -32,7 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Paralogue")
 	int GetRouteVariable(FName variableName);
 	UFUNCTION(BlueprintCallable, Category = "Paralogue")
-	void SetRouteFlag(FName flagName, bool flagValue) { routeFlags.FindOrAdd(flagName, flagValue); }
+	void SetRouteFlag(FName flagName, bool flagValue);
 	/// <summary>
 	/// Get the true or false value for the given route flag
 	/// </summary>
