@@ -33,7 +33,16 @@ int UParalogueGameInstanceSubsystem::GetRouteVariable(FName variableName)
 
 void UParalogueGameInstanceSubsystem::SetRouteFlag(FName flagName, bool flagValue)
 {
-	routeFlags.FindOrAdd(flagName, flagValue);
+	routeFlags.FindOrAdd(flagName) = flagValue; 
+
+
+
+	UE_LOG(ParalogueGameInstanceSubsystem, Log, TEXT("\n SET route flag '%s' with value %s"), *flagName.ToString(), (flagValue ? TEXT("true") : TEXT("false")));
+	
+	if (GetRouteFlag(flagName) != flagValue)
+	{
+		UE_LOG(ParalogueGameInstanceSubsystem, Warning, TEXT("FLAG VALUE SET FAILED!!!!"));
+	}
 }
 bool UParalogueGameInstanceSubsystem::GetRouteFlag(FName flagName)
 {
